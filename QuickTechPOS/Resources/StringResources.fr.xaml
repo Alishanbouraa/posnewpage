@@ -1,0 +1,170 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Common -->
+    <system:String x:Key="ApplicationTitle">QuickTech PDV</system:String>
+    <system:String x:Key="Welcome">Bienvenue</system:String>
+    <system:String x:Key="SuccessTitle">Succès</system:String>
+    <system:String x:Key="ErrorTitle">Erreur</system:String>
+    <system:String x:Key="WarningTitle">Avertissement</system:String>
+    <system:String x:Key="InfoTitle">Information</system:String>
+
+    <!-- Buttons -->
+    <system:String x:Key="SaveButton">Enregistrer</system:String>
+    <system:String x:Key="CancelButton">Annuler</system:String>
+    <system:String x:Key="CloseButton">Fermer</system:String>
+    <system:String x:Key="AddButton">Ajouter</system:String>
+    <system:String x:Key="EditButton">Modifier</system:String>
+    <system:String x:Key="DeleteButton">Supprimer</system:String>
+    <system:String x:Key="SearchButton">Rechercher</system:String>
+    <system:String x:Key="PrintButton">Imprimer</system:String>
+    <system:String x:Key="SelectButton">Sélectionner</system:String>
+
+    <!-- Transaction View Additional Elements -->
+    <system:String x:Key="ScanButton">Scanner</system:String>
+    <system:String x:Key="BoxPrice">Prix boîte:</system:String>
+    <system:String x:Key="ItemsPerBox">articles/boîte)</system:String>
+    <system:String x:Key="EditingTransaction">MODIFICATION TRANSACTION</system:String>
+    <system:String x:Key="EditingMessage">(faites des modifications et enregistrez quand terminé)</system:String>
+    <system:String x:Key="StartNewTransaction">Démarrer une nouvelle transaction</system:String>
+    <system:String x:Key="PrintReceiptTooltip">Imprimer un reçu pour cette transaction</system:String>
+    <system:String x:Key="ViewingTransaction">Consultation Transaction #</system:String>
+    <system:String x:Key="EditingTransactionNumber">MODIFICATION Transaction #</system:String>
+
+    <!-- Messages -->
+    <system:String x:Key="DrawerRequiredMessage">Vous devez ouvrir un tiroir pour continuer à utiliser le système.</system:String>
+    <system:String x:Key="TransactionComplete">Transaction complétée avec succès.</system:String>
+    <system:String x:Key="ReceiptPrinted">Reçu imprimé.</system:String>
+    <system:String x:Key="NoTransactionFound">Transaction non trouvée.</system:String>
+
+    <!-- Main Menu -->
+    <system:String x:Key="FileMenu">Fichier</system:String>
+    <system:String x:Key="EditMenu">Édition</system:String>
+    <system:String x:Key="ViewMenu">Affichage</system:String>
+    <system:String x:Key="ToolsMenu">Outils</system:String>
+    <system:String x:Key="LanguageMenu">Langue</system:String>
+    <system:String x:Key="HelpMenu">Aide</system:String>
+    <system:String x:Key="LogoutMenu">Déconnexion</system:String>
+    <system:String x:Key="SettingsMenu">Paramètres</system:String>
+
+    <!-- Login View -->
+    <system:String x:Key="LoginTitle">Connexion</system:String>
+    <system:String x:Key="Username">Nom d'utilisateur</system:String>
+    <system:String x:Key="Password">Mot de passe</system:String>
+    <system:String x:Key="SignInButton">Se connecter</system:String>
+    <system:String x:Key="IncorrectCredentials">Nom d'utilisateur ou mot de passe invalide. Veuillez réessayer.</system:String>
+
+    <!-- Transaction View -->
+    <system:String x:Key="ScanBarcode">SCANNER CODE-BARRES</system:String>
+    <system:String x:Key="SearchProducts">RECHERCHER PRODUITS</system:String>
+    <system:String x:Key="ShoppingCart">PANIER</system:String>
+    <system:String x:Key="Customer">CLIENT</system:String>
+    <system:String x:Key="SelectCustomer">Sélectionner Client</system:String>
+    <system:String x:Key="AddNewCustomer">Ajouter Nouveau</system:String>
+    <system:String x:Key="Total">MONTANT TOTAL (USD)</system:String>
+    <system:String x:Key="AmountLBP">MONTANT EN LBP</system:String>
+    <system:String x:Key="Payment">MONTANT PAYÉ</system:String>
+    <system:String x:Key="CompleteSale">FINALISER VENTE</system:String>
+    <system:String x:Key="ClearCart">Vider le panier</system:String>
+    <system:String x:Key="Product">PRODUIT</system:String>
+    <system:String x:Key="Price">PRIX</system:String>
+    <system:String x:Key="Quantity">QTÉ</system:String>
+    <system:String x:Key="Discount">REMISE</system:String>
+    <system:String x:Key="AddToDebt">Ajouter le solde restant à la dette du client</system:String>
+    <system:String x:Key="AmountToDebt">MONTANT À AJOUTER À LA DETTE</system:String>
+    <system:String x:Key="TransactionLookup">RECHERCHE TRANSACTION</system:String>
+    <system:String x:Key="TransactionNumber">Transaction #</system:String>
+    <system:String x:Key="LookupButton">Rechercher</system:String>
+    <system:String x:Key="EditTransaction">MODIFIER TRANSACTION</system:String>
+    <system:String x:Key="SaveChanges">ENREGISTRER MODIFICATIONS</system:String>
+    <system:String x:Key="CancelChanges">ANNULER MODIFICATIONS</system:String>
+    <system:String x:Key="NewSale">NOUVELLE VENTE</system:String>
+    <system:String x:Key="PrintReceipt">IMPRIMER REÇU</system:String>
+    <system:String x:Key="EnterScanBarcode">Entrez ou scannez le code-barres...</system:String>
+
+    <!-- Drawer Management -->
+    <system:String x:Key="Drawer">TIROIR</system:String>
+    <system:String x:Key="DrawerOpen">OUVERT</system:String>
+    <system:String x:Key="DrawerClosed">FERMÉ</system:String>
+    <system:String x:Key="OpenDrawerBtn">Ouvrir Tiroir</system:String>
+    <system:String x:Key="CloseDrawerBtn">Fermer Tiroir</system:String>
+    <system:String x:Key="CashOutBtn">Retrait</system:String>
+    <system:String x:Key="OpeningBalance">Solde d'ouverture</system:String>
+    <system:String x:Key="ClosingBalance">Solde de fermeture</system:String>
+    <system:String x:Key="OpenDrawerTitle">Ouvrir Tiroir-Caisse</system:String>
+    <system:String x:Key="CloseDrawerTitle">Fermer Tiroir-Caisse</system:String>
+    <system:String x:Key="CashOutTitle">Retrait d'espèces</system:String>
+    <system:String x:Key="Notes">Notes</system:String>
+    <system:String x:Key="OptionalNotes">Notes (optionnel)</system:String>
+    <system:String x:Key="RequiredNotes">Notes (obligatoire)</system:String>
+    <system:String x:Key="OpenDrawerButton">Ouvrir Tiroir</system:String>
+    <system:String x:Key="DrawerReport">Imprimer Rapport</system:String>
+    <system:String x:Key="Cashier">Caissier</system:String>
+    <system:String x:Key="OpenedAt">Ouvert à</system:String>
+    <system:String x:Key="SystemBalance">Solde Système</system:String>
+    <system:String x:Key="CurrentBalance">Solde Actuel</system:String>
+    <system:String x:Key="DailySales">Ventes Journalières</system:String>
+    <system:String x:Key="CashOutAmount">Montant du Retrait</system:String>
+    <system:String x:Key="TotalSales">Ventes Totales</system:String>
+    <system:String x:Key="NetSales">Ventes Nettes</system:String>
+    <system:String x:Key="CountCashMessage">Veuillez compter l'argent dans le tiroir et saisir le solde de fermeture:</system:String>
+    <system:String x:Key="DifferenceText">Différence (Compté - Système):</system:String>
+    <system:String x:Key="PrintAfterClosing">Imprimer après fermeture</system:String>
+    <system:String x:Key="ExecuteCashOut">Exécuter le retrait</system:String>
+    <system:String x:Key="DrawerId">ID Tiroir</system:String>
+
+    <!-- Validation and Error Messages -->
+    <system:String x:Key="ErrorDrawerNull">Impossible de fermer le tiroir: Aucune information de tiroir fournie.</system:String>
+    <system:String x:Key="DialogInitError">Erreur d'initialisation de la boîte de dialogue de fermeture du tiroir:</system:String>
+    <system:String x:Key="DialogErrorTitle">Erreur de dialogue</system:String>
+    <system:String x:Key="CustomerNameRequired">Le nom du client est requis.</system:String>
+    <system:String x:Key="CustomerPhoneRequired">Le numéro de téléphone est requis.</system:String>
+    <system:String x:Key="ErrorAddingCustomer">Erreur lors de l'ajout du client:</system:String>
+    <system:String x:Key="ErrorLoadingCustomers">Erreur lors du chargement des clients:</system:String>
+    <system:String x:Key="ErrorSearchingCustomers">Erreur lors de la recherche des clients:</system:String>
+    <system:String x:Key="PleaseSelectCustomer">Veuillez sélectionner un client dans la liste.</system:String>
+
+    <!-- Pricing Mode -->
+    <system:String x:Key="PriceMode">Mode Prix</system:String>
+    <system:String x:Key="RetailMode">Détail</system:String>
+    <system:String x:Key="WholesaleMode">Gros</system:String>
+    <system:String x:Key="LogoutButton">Déconnexion</system:String>
+
+    <!-- Language Settings -->
+    <system:String x:Key="LanguageSettings">Paramètres de Langue</system:String>
+    <system:String x:Key="SelectLanguage">Sélectionner la Langue</system:String>
+    <system:String x:Key="LanguageChangeNote">L'application appliquera le changement de langue immédiatement.</system:String>
+    <system:String x:Key="LanguageChangeSuccess">Langue changée avec succès !</system:String>
+
+    <!-- Customer Dialog -->
+    <system:String x:Key="CustomerTitle">Client</system:String>
+    <system:String x:Key="CustomerName">Nom</system:String>
+    <system:String x:Key="CustomerPhone">Téléphone</system:String>
+    <system:String x:Key="CustomerEmail">Email</system:String>
+    <system:String x:Key="CustomerAddress">Adresse</system:String>
+    <system:String x:Key="CustomerBalance">Solde</system:String>
+    <system:String x:Key="AddCustomerTitle">Ajouter Nouveau Client</system:String>
+    <system:String x:Key="SelectCustomerTitle">Sélectionner Client</system:String>
+
+
+    <!-- Hold Cart Feature -->
+    <system:String x:Key="HoldCart">Mettre en Attente</system:String>
+    <system:String x:Key="RestoreCart">Restaurer Panier</system:String>
+    <system:String x:Key="RestoreCartTitle">Restaurer Panier en Attente</system:String>
+    <system:String x:Key="RestoreButton">Restaurer le Panier Sélectionné</system:String>
+    <system:String x:Key="CartId">ID</system:String>
+    <system:String x:Key="ItemCount">Articles</system:String>
+    <system:String x:Key="CreatedAt">Créé le</system:String>
+    <system:String x:Key="PleaseSelectCart">Veuillez sélectionner un panier à restaurer.</system:String>
+
+    <!-- Messages -->
+
+    <system:String x:Key="ValidationError">Erreur de Validation</system:String>
+    <system:String x:Key="LoadingProducts">Chargement des produits...</system:String>
+    <system:String x:Key="ReadyStatus">Prêt.</system:String>
+    <system:String x:Key="NoProductsAvailable">Aucun produit disponible.</system:String>
+    <system:String x:Key="EmptyCartWarning">Le panier est vide. Impossible de finaliser.</system:String>
+    <system:String x:Key="NegativePaymentError">Le montant du paiement ne peut pas être négatif.</system:String>
+    <system:String x:Key="WalkInCustomerDebtError">Impossible d'ajouter une dette à un client de passage. Veuillez sélectionner un client enregistré.</system:String>
+</ResourceDictionary>

@@ -1,0 +1,170 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Common -->
+    <system:String x:Key="ApplicationTitle">QuickTech POS</system:String>
+    <system:String x:Key="Welcome">Welcome</system:String>
+    <system:String x:Key="SuccessTitle">Success</system:String>
+    <system:String x:Key="ErrorTitle">Error</system:String>
+    <system:String x:Key="WarningTitle">Warning</system:String>
+    <system:String x:Key="InfoTitle">Information</system:String>
+
+    <!-- Buttons -->
+    <system:String x:Key="SaveButton">Save</system:String>
+    <system:String x:Key="CancelButton">Cancel</system:String>
+    <system:String x:Key="CloseButton">Close</system:String>
+    <system:String x:Key="AddButton">Add</system:String>
+    <system:String x:Key="EditButton">Edit</system:String>
+    <system:String x:Key="DeleteButton">Delete</system:String>
+    <system:String x:Key="SearchButton">Search</system:String>
+    <system:String x:Key="PrintButton">Print</system:String>
+    <system:String x:Key="SelectButton">Select</system:String>
+
+    <!-- Main Menu -->
+    <system:String x:Key="FileMenu">File</system:String>
+    <system:String x:Key="EditMenu">Edit</system:String>
+    <system:String x:Key="ViewMenu">View</system:String>
+    <system:String x:Key="ToolsMenu">Tools</system:String>
+    <system:String x:Key="LanguageMenu">Language</system:String>
+    <system:String x:Key="HelpMenu">Help</system:String>
+    <system:String x:Key="LogoutMenu">Logout</system:String>
+    <system:String x:Key="SettingsMenu">Settings</system:String>
+
+    <!-- Login View -->
+    <system:String x:Key="LoginTitle">Login</system:String>
+    <system:String x:Key="Username">Username</system:String>
+    <system:String x:Key="Password">Password</system:String>
+    <system:String x:Key="SignInButton">Sign In</system:String>
+    <system:String x:Key="IncorrectCredentials">Invalid username or password. Please try again.</system:String>
+
+    <!-- Transaction View -->
+    <system:String x:Key="ScanBarcode">SCAN BARCODE</system:String>
+    <system:String x:Key="SearchProducts">SEARCH PRODUCTS</system:String>
+    <system:String x:Key="ShoppingCart">SHOPPING CART</system:String>
+    <system:String x:Key="Customer">CUSTOMER</system:String>
+    <system:String x:Key="SelectCustomer">Select Customer</system:String>
+    <system:String x:Key="AddNewCustomer">Add New</system:String>
+    <system:String x:Key="Total">TOTAL AMOUNT (USD)</system:String>
+    <system:String x:Key="AmountLBP">AMOUNT IN LBP</system:String>
+    <system:String x:Key="Payment">PAYMENT AMOUNT</system:String>
+    <system:String x:Key="CompleteSale">COMPLETE SALE</system:String>
+    <system:String x:Key="ClearCart">Clear Cart</system:String>
+    <system:String x:Key="Product">PRODUCT</system:String>
+    <system:String x:Key="Price">PRICE</system:String>
+    <system:String x:Key="Quantity">QTY</system:String>
+    <system:String x:Key="Discount">DISCOUNT</system:String>
+    <system:String x:Key="AddToDebt">Add remaining balance to customer debt</system:String>
+    <system:String x:Key="AmountToDebt">AMOUNT TO ADD TO DEBT</system:String>
+    <system:String x:Key="TransactionLookup">TRANSACTION LOOKUP</system:String>
+    <system:String x:Key="TransactionNumber">Transaction #</system:String>
+    <system:String x:Key="LookupButton">Lookup</system:String>
+    <system:String x:Key="EditTransaction">EDIT TRANSACTION</system:String>
+    <system:String x:Key="SaveChanges">SAVE CHANGES</system:String>
+    <system:String x:Key="CancelChanges">CANCEL CHANGES</system:String>
+    <system:String x:Key="NewSale">NEW SALE</system:String>
+    <system:String x:Key="PrintReceipt">PRINT RECEIPT</system:String>
+    <system:String x:Key="EnterScanBarcode">Enter or scan barcode...</system:String>
+
+    <!-- Drawer Management -->
+    <system:String x:Key="Drawer">DRAWER</system:String>
+    <system:String x:Key="DrawerOpen">OPEN</system:String>
+    <system:String x:Key="DrawerClosed">CLOSED</system:String>
+    <system:String x:Key="OpenDrawerBtn">Open Drawer</system:String>
+    <system:String x:Key="CloseDrawerBtn">Close Drawer</system:String>
+    <system:String x:Key="CashOutBtn">Cash Out</system:String>
+    <system:String x:Key="OpeningBalance">Opening Balance</system:String>
+    <system:String x:Key="ClosingBalance">Closing Balance</system:String>
+    <system:String x:Key="OpenDrawerTitle">Open Cash Drawer</system:String>
+    <system:String x:Key="CloseDrawerTitle">Close Cash Drawer</system:String>
+    <system:String x:Key="CashOutTitle">Cash Out</system:String>
+    <system:String x:Key="Notes">Notes</system:String>
+    <system:String x:Key="OptionalNotes">Notes (optional)</system:String>
+    <system:String x:Key="RequiredNotes">Notes (required)</system:String>
+    <system:String x:Key="OpenDrawerButton">Open Drawer</system:String>
+    <system:String x:Key="DrawerReport">Print Report</system:String>
+    <system:String x:Key="Cashier">Cashier</system:String>
+    <system:String x:Key="OpenedAt">Opened At</system:String>
+    <system:String x:Key="SystemBalance">System Balance</system:String>
+    <system:String x:Key="CurrentBalance">Current Balance</system:String>
+    <system:String x:Key="DailySales">Daily Sales</system:String>
+    <system:String x:Key="CashOutAmount">Cash Out Amount</system:String>
+    <system:String x:Key="TotalSales">Total Sales</system:String>
+    <system:String x:Key="NetSales">Net Sales</system:String>
+    <system:String x:Key="CountCashMessage">Please count the cash in the drawer and enter the closing balance:</system:String>
+    <system:String x:Key="DifferenceText">Difference (Counted - System):</system:String>
+    <system:String x:Key="PrintAfterClosing">Print after closing</system:String>
+    <system:String x:Key="ExecuteCashOut">Execute Cash Out</system:String>
+    <system:String x:Key="DrawerId">Drawer ID</system:String>
+
+    <!-- Validation and Error Messages -->
+    <system:String x:Key="ErrorDrawerNull">Cannot close drawer: No drawer information provided.</system:String>
+    <system:String x:Key="DialogInitError">Error initializing Close Drawer dialog:</system:String>
+    <system:String x:Key="DialogErrorTitle">Dialog Error</system:String>
+    <system:String x:Key="CustomerNameRequired">Customer name is required.</system:String>
+    <system:String x:Key="CustomerPhoneRequired">Phone number is required.</system:String>
+    <system:String x:Key="ErrorAddingCustomer">Error adding customer:</system:String>
+    <system:String x:Key="ErrorLoadingCustomers">Error loading customers:</system:String>
+    <system:String x:Key="ErrorSearchingCustomers">Error searching customers:</system:String>
+    <system:String x:Key="PleaseSelectCustomer">Please select a customer from the list.</system:String>
+
+    <!-- Pricing Mode -->
+    <system:String x:Key="PriceMode">Price Mode</system:String>
+    <system:String x:Key="RetailMode">Retail</system:String>
+    <system:String x:Key="WholesaleMode">Wholesale</system:String>
+    <system:String x:Key="LogoutButton">Logout</system:String>
+
+
+    <!-- Transaction View Additional Elements -->
+    <system:String x:Key="ScanButton">Scan</system:String>
+    <system:String x:Key="BoxPrice">Box Price:</system:String>
+    <system:String x:Key="ItemsPerBox">items/box)</system:String>
+    <system:String x:Key="EditingTransaction">EDITING TRANSACTION</system:String>
+    <system:String x:Key="EditingMessage">(make changes and save when complete)</system:String>
+    <system:String x:Key="StartNewTransaction">Start a new transaction</system:String>
+    <system:String x:Key="PrintReceiptTooltip">Print a receipt for this transaction</system:String>
+    <system:String x:Key="ViewingTransaction">Viewing Transaction #</system:String>
+    <system:String x:Key="EditingTransactionNumber">EDITING Transaction #</system:String>
+
+    <!-- Messages -->
+    <system:String x:Key="DrawerRequiredMessage">You must open a drawer to continue using the system.</system:String>
+    <system:String x:Key="TransactionComplete">Transaction completed successfully.</system:String>
+    <system:String x:Key="ReceiptPrinted">Receipt printed.</system:String>
+    <system:String x:Key="NoTransactionFound">Transaction not found.</system:String>
+
+    <!-- Language Settings -->
+    <system:String x:Key="LanguageSettings">Language Settings</system:String>
+    <system:String x:Key="SelectLanguage">Select Language</system:String>
+    <system:String x:Key="LanguageChangeNote">The application will apply the language change immediately.</system:String>
+    <system:String x:Key="LanguageChangeSuccess">Language changed successfully!</system:String>
+
+    <!-- Customer Dialog -->
+    <system:String x:Key="CustomerTitle">Customer</system:String>
+    <system:String x:Key="CustomerName">Name</system:String>
+    <system:String x:Key="CustomerPhone">Phone</system:String>
+    <system:String x:Key="CustomerEmail">Email</system:String>
+    <system:String x:Key="CustomerAddress">Address</system:String>
+    <system:String x:Key="CustomerBalance">Balance</system:String>
+    <system:String x:Key="AddCustomerTitle">Add New Customer</system:String>
+    <system:String x:Key="SelectCustomerTitle">Select Customer</system:String>
+
+
+    <!-- Hold Cart Feature -->
+    <system:String x:Key="HoldCart">Hold Cart</system:String>
+    <system:String x:Key="RestoreCart">Restore Cart</system:String>
+    <system:String x:Key="RestoreCartTitle">Restore Held Cart</system:String>
+    <system:String x:Key="RestoreButton">Restore Selected Cart</system:String>
+    <system:String x:Key="CartId">ID</system:String>
+    <system:String x:Key="ItemCount">Items</system:String>
+    <system:String x:Key="CreatedAt">Created</system:String>
+    <system:String x:Key="PleaseSelectCart">Please select a cart to restore.</system:String>
+
+    <!-- Messages -->
+    <system:String x:Key="ValidationError">Validation Error</system:String>
+    <system:String x:Key="LoadingProducts">Loading products...</system:String>
+    <system:String x:Key="ReadyStatus">Ready.</system:String>
+    <system:String x:Key="NoProductsAvailable">No products available.</system:String>
+    <system:String x:Key="EmptyCartWarning">Cart is empty. Cannot checkout.</system:String>
+    <system:String x:Key="NegativePaymentError">Payment amount cannot be negative.</system:String>
+    <system:String x:Key="WalkInCustomerDebtError">Cannot add debt to a walk-in customer. Please select a registered customer.</system:String>
+</ResourceDictionary>

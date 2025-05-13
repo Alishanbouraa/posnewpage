@@ -1,0 +1,114 @@
+﻿<Window x:Class="QuickTechPOS.Views.LanguageSettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{DynamicResource LanguageSettings}" 
+        Height="300" 
+        Width="400"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <Style x:Key="HeaderText" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#1E293B"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="#2563EB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                CornerRadius="4"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1D4ED8"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#94A3B8"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="#F1F5F9"/>
+            <Setter Property="Foreground" Value="#334155"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#E2E8F0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="#F8FAFC" BorderThickness="0">
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <TextBlock Grid.Row="0" 
+                       Text="{DynamicResource LanguageSettings}" 
+                       FontSize="22" 
+                       FontWeight="Bold"
+                       Foreground="#0F172A"
+                       Margin="0,0,0,20"/>
+
+            <!-- Content -->
+            <StackPanel Grid.Row="1">
+                <TextBlock Text="{DynamicResource SelectLanguage}" 
+                           Style="{StaticResource HeaderText}"/>
+
+                <ComboBox x:Name="LanguageComboBox" 
+                          Height="38"
+                          Margin="0,0,0,20"
+                          Padding="10,0"
+                          FontSize="14"
+                          VerticalContentAlignment="Center"/>
+
+                <TextBlock Text="{DynamicResource LanguageChangeNote}" 
+                           TextWrapping="Wrap"
+                           Foreground="#64748B"
+                           Margin="0,10,0,0"/>
+            </StackPanel>
+
+            <!-- Buttons -->
+            <StackPanel Grid.Row="2" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Right" 
+                        Margin="0,20,0,0">
+                <Button x:Name="CancelButton"
+                        Content="{DynamicResource CancelButton}" 
+                        Width="100" 
+                        Style="{StaticResource SecondaryButton}"
+                        Margin="0,0,12,0"
+                        Click="CancelButton_Click"/>
+                <Button x:Name="SaveButton"
+                        Content="{DynamicResource SaveButton}" 
+                        Width="100" 
+                        Style="{StaticResource PrimaryButton}"
+                        Click="SaveButton_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

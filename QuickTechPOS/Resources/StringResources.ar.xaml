@@ -1,0 +1,169 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Common -->
+    <system:String x:Key="ApplicationTitle">كويك تك نقاط البيع</system:String>
+    <system:String x:Key="Welcome">مرحباً</system:String>
+    <system:String x:Key="SuccessTitle">تم بنجاح</system:String>
+    <system:String x:Key="ErrorTitle">خطأ</system:String>
+    <system:String x:Key="WarningTitle">تحذير</system:String>
+    <system:String x:Key="InfoTitle">معلومات</system:String>
+
+    <!-- Buttons -->
+    <system:String x:Key="SaveButton">حفظ</system:String>
+    <system:String x:Key="CancelButton">إلغاء</system:String>
+    <system:String x:Key="CloseButton">إغلاق</system:String>
+    <system:String x:Key="AddButton">إضافة</system:String>
+    <system:String x:Key="EditButton">تعديل</system:String>
+    <system:String x:Key="DeleteButton">حذف</system:String>
+    <system:String x:Key="SearchButton">بحث</system:String>
+    <system:String x:Key="PrintButton">طباعة</system:String>
+    <system:String x:Key="SelectButton">اختيار</system:String>
+
+    <!-- Transaction View Additional Elements -->
+    <system:String x:Key="ScanButton">مسح</system:String>
+    <system:String x:Key="BoxPrice">سعر الصندوق:</system:String>
+    <system:String x:Key="ItemsPerBox">قطعة/صندوق)</system:String>
+    <system:String x:Key="EditingTransaction">تعديل المعاملة</system:String>
+    <system:String x:Key="EditingMessage">(قم بإجراء التغييرات والحفظ عند الانتهاء)</system:String>
+    <system:String x:Key="StartNewTransaction">بدء معاملة جديدة</system:String>
+    <system:String x:Key="PrintReceiptTooltip">طباعة إيصال لهذه المعاملة</system:String>
+    <system:String x:Key="ViewingTransaction">عرض المعاملة رقم #</system:String>
+    <system:String x:Key="EditingTransactionNumber">تعديل المعاملة رقم #</system:String>
+
+    <!-- Messages -->
+    <system:String x:Key="DrawerRequiredMessage">يجب فتح درج النقد لمواصلة استخدام النظام.</system:String>
+    <system:String x:Key="TransactionComplete">تمت المعاملة بنجاح.</system:String>
+    <system:String x:Key="ReceiptPrinted">تمت طباعة الإيصال.</system:String>
+    <system:String x:Key="NoTransactionFound">لم يتم العثور على المعاملة.</system:String>
+
+    <!-- Main Menu -->
+    <system:String x:Key="FileMenu">ملف</system:String>
+    <system:String x:Key="EditMenu">تحرير</system:String>
+    <system:String x:Key="ViewMenu">عرض</system:String>
+    <system:String x:Key="ToolsMenu">أدوات</system:String>
+    <system:String x:Key="LanguageMenu">اللغة</system:String>
+    <system:String x:Key="HelpMenu">مساعدة</system:String>
+    <system:String x:Key="LogoutMenu">تسجيل الخروج</system:String>
+    <system:String x:Key="SettingsMenu">إعدادات</system:String>
+
+    <!-- Login View -->
+    <system:String x:Key="LoginTitle">تسجيل الدخول</system:String>
+    <system:String x:Key="Username">اسم المستخدم</system:String>
+    <system:String x:Key="Password">كلمة المرور</system:String>
+    <system:String x:Key="SignInButton">تسجيل الدخول</system:String>
+    <system:String x:Key="IncorrectCredentials">اسم المستخدم أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.</system:String>
+
+    <!-- Transaction View -->
+    <system:String x:Key="ScanBarcode">مسح الباركود</system:String>
+    <system:String x:Key="SearchProducts">بحث المنتجات</system:String>
+    <system:String x:Key="ShoppingCart">سلة التسوق</system:String>
+    <system:String x:Key="Customer">العميل</system:String>
+    <system:String x:Key="SelectCustomer">اختيار العميل</system:String>
+    <system:String x:Key="AddNewCustomer">إضافة جديد</system:String>
+    <system:String x:Key="Total">المبلغ الإجمالي (دولار)</system:String>
+    <system:String x:Key="AmountLBP">المبلغ بالليرة اللبنانية</system:String>
+    <system:String x:Key="Payment">مبلغ الدفع</system:String>
+    <system:String x:Key="CompleteSale">إتمام البيع</system:String>
+    <system:String x:Key="ClearCart">مسح السلة</system:String>
+    <system:String x:Key="Product">المنتج</system:String>
+    <system:String x:Key="Price">السعر</system:String>
+    <system:String x:Key="Quantity">الكمية</system:String>
+    <system:String x:Key="Discount">الخصم</system:String>
+    <system:String x:Key="AddToDebt">إضافة الرصيد المتبقي إلى ديون العميل</system:String>
+    <system:String x:Key="AmountToDebt">المبلغ المضاف للدين</system:String>
+    <system:String x:Key="TransactionLookup">بحث المعاملات</system:String>
+    <system:String x:Key="TransactionNumber">رقم المعاملة</system:String>
+    <system:String x:Key="LookupButton">بحث</system:String>
+    <system:String x:Key="EditTransaction">تعديل المعاملة</system:String>
+    <system:String x:Key="SaveChanges">حفظ التغييرات</system:String>
+    <system:String x:Key="CancelChanges">إلغاء التغييرات</system:String>
+    <system:String x:Key="NewSale">بيع جديد</system:String>
+    <system:String x:Key="PrintReceipt">طباعة الإيصال</system:String>
+    <system:String x:Key="EnterScanBarcode">أدخل أو امسح الباركود...</system:String>
+
+    <!-- Drawer Management -->
+    <system:String x:Key="Drawer">الدرج</system:String>
+    <system:String x:Key="DrawerOpen">مفتوح</system:String>
+    <system:String x:Key="DrawerClosed">مغلق</system:String>
+    <system:String x:Key="OpenDrawerBtn">فتح الدرج</system:String>
+    <system:String x:Key="CloseDrawerBtn">إغلاق الدرج</system:String>
+    <system:String x:Key="CashOutBtn">سحب النقود</system:String>
+    <system:String x:Key="OpeningBalance">الرصيد الافتتاحي</system:String>
+    <system:String x:Key="ClosingBalance">الرصيد الختامي</system:String>
+    <system:String x:Key="OpenDrawerTitle">فتح درج النقد</system:String>
+    <system:String x:Key="CloseDrawerTitle">إغلاق درج النقد</system:String>
+    <system:String x:Key="CashOutTitle">سحب النقود</system:String>
+    <system:String x:Key="Notes">ملاحظات</system:String>
+    <system:String x:Key="OptionalNotes">ملاحظات (اختياري)</system:String>
+    <system:String x:Key="RequiredNotes">ملاحظات (مطلوب)</system:String>
+    <system:String x:Key="OpenDrawerButton">فتح الدرج</system:String>
+    <system:String x:Key="DrawerReport">طباعة التقرير</system:String>
+    <system:String x:Key="Cashier">الكاشير</system:String>
+    <system:String x:Key="OpenedAt">تم الفتح في</system:String>
+    <system:String x:Key="SystemBalance">رصيد النظام</system:String>
+    <system:String x:Key="CurrentBalance">الرصيد الحالي</system:String>
+    <system:String x:Key="DailySales">المبيعات اليومية</system:String>
+    <system:String x:Key="CashOutAmount">مبلغ سحب النقود</system:String>
+    <system:String x:Key="TotalSales">إجمالي المبيعات</system:String>
+    <system:String x:Key="NetSales">صافي المبيعات</system:String>
+    <system:String x:Key="CountCashMessage">يرجى عد النقود في الدرج وإدخال الرصيد النهائي:</system:String>
+    <system:String x:Key="DifferenceText">الفرق (المحسوب - النظام):</system:String>
+    <system:String x:Key="PrintAfterClosing">طباعة بعد الإغلاق</system:String>
+    <system:String x:Key="ExecuteCashOut">تنفيذ السحب النقدي</system:String>
+    <system:String x:Key="DrawerId">رقم الدرج</system:String>
+
+    <!-- Validation and Error Messages -->
+    <system:String x:Key="ErrorDrawerNull">لا يمكن إغلاق الدرج: لا توجد معلومات للدرج.</system:String>
+    <system:String x:Key="DialogInitError">خطأ في تهيئة نافذة إغلاق الدرج:</system:String>
+    <system:String x:Key="DialogErrorTitle">خطأ في النافذة</system:String>
+    <system:String x:Key="CustomerNameRequired">اسم العميل مطلوب.</system:String>
+    <system:String x:Key="CustomerPhoneRequired">رقم الهاتف مطلوب.</system:String>
+    <system:String x:Key="ErrorAddingCustomer">خطأ في إضافة العميل:</system:String>
+    <system:String x:Key="ErrorLoadingCustomers">خطأ في تحميل العملاء:</system:String>
+    <system:String x:Key="ErrorSearchingCustomers">خطأ في البحث عن العملاء:</system:String>
+    <system:String x:Key="PleaseSelectCustomer">يرجى اختيار عميل من القائمة.</system:String>
+
+    <!-- Pricing Mode -->
+    <system:String x:Key="PriceMode">وضع التسعير</system:String>
+    <system:String x:Key="RetailMode">تجزئة</system:String>
+    <system:String x:Key="WholesaleMode">جملة</system:String>
+    <system:String x:Key="LogoutButton">تسجيل الخروج</system:String>
+
+    <!-- Language Settings -->
+    <system:String x:Key="LanguageSettings">إعدادات اللغة</system:String>
+    <system:String x:Key="SelectLanguage">اختر اللغة</system:String>
+    <system:String x:Key="LanguageChangeNote">سيتم تطبيق تغيير اللغة فوراً.</system:String>
+    <system:String x:Key="LanguageChangeSuccess">تم تغيير اللغة بنجاح!</system:String>
+
+    <!-- Customer Dialog -->
+    <system:String x:Key="CustomerTitle">العميل</system:String>
+    <system:String x:Key="CustomerName">الاسم</system:String>
+    <system:String x:Key="CustomerPhone">الهاتف</system:String>
+    <system:String x:Key="CustomerEmail">البريد الإلكتروني</system:String>
+    <system:String x:Key="CustomerAddress">العنوان</system:String>
+    <system:String x:Key="CustomerBalance">الرصيد</system:String>
+    <system:String x:Key="AddCustomerTitle">إضافة عميل جديد</system:String>
+    <system:String x:Key="SelectCustomerTitle">اختيار العميل</system:String>
+
+    <!-- Hold Cart Feature -->
+    <system:String x:Key="HoldCart">تعليق السلة</system:String>
+    <system:String x:Key="RestoreCart">استعادة السلة</system:String>
+    <system:String x:Key="RestoreCartTitle">استعادة السلة المعلقة</system:String>
+    <system:String x:Key="RestoreButton">استعادة السلة المحددة</system:String>
+    <system:String x:Key="CartId">الرقم</system:String>
+    <system:String x:Key="ItemCount">العناصر</system:String>
+    <system:String x:Key="CreatedAt">تاريخ الإنشاء</system:String>
+    <system:String x:Key="PleaseSelectCart">الرجاء تحديد سلة لاستعادتها.</system:String>
+
+    <!-- Messages -->
+
+    <system:String x:Key="ValidationError">خطأ في التحقق</system:String>
+    <system:String x:Key="LoadingProducts">جاري تحميل المنتجات...</system:String>
+    <system:String x:Key="ReadyStatus">جاهز.</system:String>
+    <system:String x:Key="NoProductsAvailable">لا توجد منتجات متاحة.</system:String>
+    <system:String x:Key="EmptyCartWarning">السلة فارغة. لا يمكن إتمام الدفع.</system:String>
+    <system:String x:Key="NegativePaymentError">لا يمكن أن يكون مبلغ الدفع سالباً.</system:String>
+    <system:String x:Key="WalkInCustomerDebtError">لا يمكن إضافة دين لعميل عابر. الرجاء اختيار عميل مسجل.</system:String>
+</ResourceDictionary>

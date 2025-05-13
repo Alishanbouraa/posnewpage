@@ -1,0 +1,87 @@
+- QuickTechPOS.sln
+- README.md
+
+QuickTechPOS
+- App.xaml
+- App.xaml.cs
+- appsettings.json
+- AssemblyInfo.cs
+- MainView.xaml
+- MainView.xaml.cs
+- MainWindow.xaml
+- MainWindow.xaml.cs
+- QuickTechPOS.csproj
+- QuickTechPOS.csproj.user
+
+QuickTechPOS\Helpers
+- DifferenceToColorConverter.cs
+- DifferenceToTextColorConverter.cs
+- EnumExtensions.cs
+- InverseBooleanToVisibilityConverter.cs
+- PasswordHasher.cs
+- PositiveIntToVisibilityConverter.cs
+- RelayCommand.cs
+- StringToVisibilityConverter.cs
+
+QuickTechPOS\Models
+- BusinessSetting.cs
+- CartItem.cs
+- Customer.cs
+- CustomerProductPrice.cs
+- Drawer.cs
+- DrawerHistoryEntry.cs
+- DrawerTransaction.cs
+- Employee.cs
+- Product.cs
+- Transaction.cs
+- TransactionDetail.cs
+
+QuickTechPOS\Models\Enums
+- TransactionStatus.cs
+- TransactionType.cs
+
+QuickTechPOS\Properties
+
+QuickTechPOS\Properties\PublishProfiles
+- FolderProfile.pubxml
+- FolderProfile.pubxml.user
+
+QuickTechPOS\Services
+- AuthenticationService.cs
+- BusinessSettingsService.cs
+- ConfigurationService.cs
+- CustomerProductPriceService.cs
+- CustomerService.cs
+- DatabaseContext.cs
+- DatabaseDiagnostics.cs
+- DatabaseService.cs
+- DrawerService.cs
+- NavigationService.cs
+- ProductService.cs
+- ReceiptPrinterService.cs
+- TransactionService.cs
+
+QuickTechPOS\ViewModels
+- BaseViewModel.cs
+- CashOutViewModel.cs
+- CloseDrawerViewModel.cs
+- LoginViewModel.cs
+- MainViewModel.cs
+- OpenDrawerViewModel.cs
+- TransactionViewModel.cs
+
+QuickTechPOS\Views
+- AddCustomerDialog.xaml
+- AddCustomerDialog.xaml.cs
+- CashOutDialog.xaml
+- CashOutDialog.xaml.cs
+- CloseDrawerDialog.xaml
+- CloseDrawerDialog.xaml.cs
+- CustomerSelectionDialog.xaml
+- CustomerSelectionDialog.xaml.cs
+- LoginView.xaml
+- LoginView.xaml.cs
+- OpenDrawerDialog.xaml
+- OpenDrawerDialog.xaml.cs
+- TransactionView.xaml
+- TransactionView.xaml.cs

@@ -1,0 +1,273 @@
+﻿<Window x:Class="QuickTechPOS.Views.CloseDrawerDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{DynamicResource CloseDrawerTitle}" 
+        Height="660" 
+        Width="500"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" 
+                   Text="{DynamicResource CloseDrawerTitle}" 
+                   FontSize="20" 
+                   FontWeight="Bold"
+                   Foreground="#2C3E50"
+                   Margin="0,0,0,15"/>
+
+        <!-- Content -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Drawer Information -->
+            <Border Grid.Row="0" 
+                    Background="#F8F9FA" 
+                    BorderBrush="#DADADA" 
+                    BorderThickness="1" 
+                    CornerRadius="4" 
+                    Padding="15"
+                    Margin="0,0,0,15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Left column -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" 
+                               Text="{DynamicResource Cashier}" 
+                               FontWeight="Bold"
+                               Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" 
+                               Text="{Binding Drawer.CashierName}"
+                               Margin="0,0,0,5"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" 
+                               Text="{DynamicResource OpenedAt}" 
+                               FontWeight="Bold"
+                               Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" 
+                               Text="{Binding Drawer.FormattedOpenedAt}"
+                               Margin="0,0,0,5"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" 
+                               Text="{DynamicResource OpeningBalance}" 
+                               FontWeight="Bold"
+                               Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" 
+                               Text="{Binding Drawer.FormattedOpeningBalance}"
+                               Margin="0,0,0,5"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" 
+                               Text="{DynamicResource SystemBalance}" 
+                               FontWeight="Bold"
+                               Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" 
+                               Text="{Binding Drawer.FormattedCurrentBalance}"
+                               Margin="0,0,0,5"/>
+                </Grid>
+            </Border>
+
+            <!-- Sales Information -->
+            <Border Grid.Row="1" 
+        Background="#F8F9FA" 
+        BorderBrush="#DADADA" 
+        BorderThickness="1" 
+        CornerRadius="4" 
+        Padding="15"
+        Margin="0,0,0,15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Headers -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" 
+                   Text="{DynamicResource DailySales}" 
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" 
+                   Text="{DynamicResource CashOut}" 
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" 
+                   Text="{DynamicResource TotalSales}" 
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" 
+                   Text="{DynamicResource NetSales}" 
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,5"/>
+
+                    <!-- Values -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" 
+                   Text="{Binding Drawer.FormattedDailySales}"
+                   HorizontalAlignment="Center"
+                   Foreground="#2ECC71"
+                   FontWeight="Bold"
+                   Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" 
+                   Text="{Binding Drawer.CashOut, StringFormat='${0:F2}'}"
+                   HorizontalAlignment="Center"
+                   Foreground="#E74C3C"
+                   FontWeight="Bold"
+                   Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="1" Grid.Column="2" 
+                   Text="{Binding Drawer.FormattedTotalSales}"
+                   HorizontalAlignment="Center"
+                   Foreground="#2980B9"
+                   FontWeight="Bold"
+                   Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="1" Grid.Column="3" 
+                   Text="{Binding Drawer.FormattedNetSales}"
+                   HorizontalAlignment="Center"
+                   Foreground="#3498DB"
+                   FontWeight="Bold"
+                   Margin="0,0,0,5"/>
+                </Grid>
+            </Border>
+
+            <!-- Closing Balance Entry -->
+            <TextBlock Grid.Row="2" 
+                       Text="{DynamicResource CountCashMessage}" 
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,10"/>
+
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" 
+                           Text="$" 
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"
+                           Margin="5,0,5,0"/>
+                <TextBox Grid.Column="1" 
+                         Text="{Binding ClosingBalance, StringFormat=N2, UpdateSourceTrigger=PropertyChanged}" 
+                         Height="32"
+                         Padding="5,0"
+                         VerticalContentAlignment="Center"/>
+            </Grid>
+
+            <!-- Difference -->
+            <Border Grid.Row="4" 
+                    Background="{Binding CalculatedDifference, Converter={StaticResource DifferenceToColorConverter}}" 
+                    BorderBrush="#DADADA" 
+                    BorderThickness="1" 
+                    CornerRadius="4" 
+                    Padding="15"
+                    Margin="0,15,0,15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" 
+                               Text="{DynamicResource DifferenceText}" 
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"/>
+                    <TextBlock Grid.Column="1" 
+                               Text="{Binding CalculatedDifference, StringFormat='${0:F2}'}" 
+                               FontWeight="Bold"
+                               Foreground="{Binding CalculatedDifference, Converter={StaticResource DifferenceToTextColorConverter}}"
+                               VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
+
+            <!-- Closing Notes -->
+            <TextBlock Grid.Row="5" 
+                       Text="{DynamicResource OptionalNotes}" 
+                       FontWeight="Bold"
+                       Margin="0,0,0,5"/>
+            <TextBox Grid.Row="6"
+                     Text="{Binding ClosingNotes, UpdateSourceTrigger=PropertyChanged}" 
+                     Height="80"
+                     TextWrapping="Wrap"
+                     AcceptsReturn="True"
+                     VerticalScrollBarVisibility="Auto"
+                     Padding="5"
+                     Margin="0,0,0,10"/>
+
+            <!-- Error message -->
+            <TextBlock Grid.Row="7" 
+                       Text="{Binding ErrorMessage}" 
+                       Foreground="Red" 
+                       TextWrapping="Wrap" 
+                       Margin="0,5,0,0" 
+                       Visibility="{Binding ErrorMessage, Converter={StaticResource StringToVisibilityConverter}}"/>
+
+            <!-- Loading indicator -->
+            <ProgressBar Grid.Row="8" 
+                         IsIndeterminate="True" 
+                         Height="4" 
+                         Margin="0,5,0,0"
+                         Visibility="{Binding IsProcessing, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        </Grid>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center" 
+                    Margin="0,15,0,0">
+            <CheckBox Content="{DynamicResource PrintAfterClosing}" 
+          IsChecked="{Binding PrintReportAfterClosing}"
+          FontWeight="Medium" Width="159"/>
+            <Button Content="{DynamicResource CancelButton}" 
+                    Command="{Binding CancelCommand}"
+                    Width="80" 
+                    Height="32"
+                    Margin="0,0,10,0"/>
+            <Button Content="{DynamicResource CloseDrawerBtn}" 
+                    Command="{Binding CloseDrawerCommand}"
+                    Width="110" 
+                    Height="40"
+                    Background="#E74C3C" 
+                    Foreground="White"
+                    FontWeight="Bold"
+                    FontSize="14" Click="Button_Click"/>
+            <!-- In CloseDrawerDialog.xaml, near the bottom buttons -->
+            <Button Content="{DynamicResource DrawerReport}" 
+        Command="{Binding PrintReportCommand}"
+        Width="100" 
+        Height="32"
+        Margin="0,0,10,0"/>
+        </StackPanel>
+    </Grid>
+</Window>
