@@ -1,6 +1,4 @@
-﻿// File: QuickTechPOS/Services/FailedTransactionService.cs
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using QuickTechPOS.Models;
 using QuickTechPOS.Models.Enums;
 using System;
@@ -14,26 +12,35 @@ namespace QuickTechPOS.Services
     /// <summary>
     /// Service for managing failed transactions
     /// </summary>
-    public class FailedTransactionService
+    public class FailedTransactionService : IFailedTransactionService
     {
         private readonly DatabaseContext _dbContext;
-        private readonly TransactionService _transactionService;
+        private readonly ITransactionService _transactionService;
         private readonly DrawerService _drawerService;
 
         /// <summary>
-        /// Initializes a new instance of the failed transaction service
+        /// Initializes a new instance of the failed transaction service with dependency injection
+        /// </summary>
+        public FailedTransactionService(ITransactionService transactionService)
+        {
+            _dbContext = new DatabaseContext(ConfigurationService.ConnectionString);
+            _transactionService = transactionService;
+            _drawerService = new DrawerService();
+        }
+
+        /// <summary>
+        /// Constructor to break circular dependency when created from TransactionService
         /// </summary>
         public FailedTransactionService()
         {
             _dbContext = new DatabaseContext(ConfigurationService.ConnectionString);
-            _transactionService = new TransactionService();
+            _transactionService = null; // Will be set later if needed
             _drawerService = new DrawerService();
         }
 
         /// <summary>
         /// Gets all failed transactions that can be retried
         /// </summary>
-        /// <returns>A list of failed transactions</returns>
         public async Task<List<FailedTransaction>> GetFailedTransactionsAsync()
         {
             try
@@ -53,8 +60,6 @@ namespace QuickTechPOS.Services
         /// <summary>
         /// Gets a failed transaction by ID
         /// </summary>
-        /// <param name="failedTransactionId">The failed transaction ID</param>
-        /// <returns>The failed transaction or null if not found</returns>
         public async Task<FailedTransaction> GetFailedTransactionByIdAsync(int failedTransactionId)
         {
             try
@@ -71,12 +76,6 @@ namespace QuickTechPOS.Services
         /// <summary>
         /// Records a failed transaction for later retry
         /// </summary>
-        /// <param name="transaction">Partial transaction data</param>
-        /// <param name="cartItems">Items in the cart</param>
-        /// <param name="cashier">The cashier processing the transaction</param>
-        /// <param name="error">The error that occurred</param>
-        /// <param name="component">The component where the failure occurred</param>
-        /// <returns>The saved failed transaction</returns>
         public async Task<FailedTransaction> RecordFailedTransactionAsync(
             Transaction partialTransaction,
             List<CartItem> cartItems,
@@ -131,10 +130,14 @@ namespace QuickTechPOS.Services
         /// <summary>
         /// Attempts to retry a failed transaction
         /// </summary>
-        /// <param name="failedTransactionId">The failed transaction ID</param>
-        /// <returns>Result of the retry attempt</returns>
         public async Task<(bool Success, string Message, Transaction Transaction)> RetryTransactionAsync(int failedTransactionId)
         {
+            // Verify we have a transaction service
+            if (_transactionService == null)
+            {
+                return (false, "Transaction service not available for retry.", null);
+            }
+
             var failedTransaction = await _dbContext.FailedTransactions.FindAsync(failedTransactionId);
             if (failedTransaction == null)
             {
@@ -192,13 +195,13 @@ namespace QuickTechPOS.Services
 
                 // Retry the transaction
                 var transaction = await _transactionService.CreateTransactionAsync(
-      failedTransaction.CartItems,
-      failedTransaction.PaidAmount,
-      employee,
-      failedTransaction.PaymentMethod,
-      failedTransaction.CustomerName,
-      failedTransaction.CustomerId ?? 0
-  );
+                    failedTransaction.CartItems,
+                    failedTransaction.PaidAmount,
+                    employee,
+                    failedTransaction.PaymentMethod,
+                    failedTransaction.CustomerName,
+                    failedTransaction.CustomerId ?? 0
+                );
 
                 // Mark as completed if successful
                 failedTransaction.State = FailedTransactionState.Completed;
@@ -223,8 +226,6 @@ namespace QuickTechPOS.Services
         /// <summary>
         /// Cancels a failed transaction
         /// </summary>
-        /// <param name="failedTransactionId">The failed transaction ID</param>
-        /// <returns>True if successful, false otherwise</returns>
         public async Task<bool> CancelFailedTransactionAsync(int failedTransactionId)
         {
             try

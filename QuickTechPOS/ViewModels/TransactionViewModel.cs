@@ -319,8 +319,8 @@ namespace QuickTechPOS.ViewModels
 
         public TransactionViewModel(AuthenticationService authService, Customer walkInCustomer = null)
         {
+            // Initialize basic services
             _productService = new ProductService();
-            _transactionService = new TransactionService();
             _customerService = new CustomerService();
             _customerPriceService = new CustomerProductPriceService();
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
@@ -328,21 +328,20 @@ namespace QuickTechPOS.ViewModels
             _drawerService = new DrawerService();
             _receiptPrinterService = new ReceiptPrinterService();
             _businessSettingsService = new BusinessSettingsService();
+
+            // Create transaction service with proper dependency injection
+            _transactionService = new TransactionService(); // Create this without passing FailedTransactionService
+
+            // Initialize default values
             _exchangeRate = 90000; // Default value until loaded from DB
-            LogoutCommand = new RelayCommand(param => Logout());
-            NextTransactionCommand = new RelayCommand(
-            async param => await NavigateToNextTransactionAsync(),
-            param => IsTransactionLoaded && CanNavigateNext);
+
+            // Initialize collections
             HeldCarts = new ObservableCollection<HeldCart>();
-            HoldCartCommand = new RelayCommand(param => HoldCurrentCart(), param => CanHoldCart());
-            RestoreCartCommand = new RelayCommand(param => RestoreHeldCart(), param => CanRestoreCart());
-            PreviousTransactionCommand = new RelayCommand(
-            async param => await NavigateToPreviousTransactionAsync(),
-            param => IsTransactionLoaded && CanNavigatePrevious);
             SearchedProducts = new ObservableCollection<Product>();
             SearchedCustomers = new ObservableCollection<Customer>();
             CartItems = new ObservableCollection<CartItem>();
 
+            // Initialize customer information
             CustomerName = "Walk-in Customer";
             if (_walkInCustomer != null)
             {
@@ -355,6 +354,7 @@ namespace QuickTechPOS.ViewModels
                 Console.WriteLine("No walk-in customer provided. Customer ID set to 0.");
             }
 
+            // Initialize timers
             _searchTimer = new System.Timers.Timer(300);
             _searchTimer.Elapsed += OnSearchTimerElapsed;
             _searchTimer.AutoReset = false;
@@ -363,35 +363,42 @@ namespace QuickTechPOS.ViewModels
             _customerSearchTimer.Elapsed += OnCustomerSearchTimerElapsed;
             _customerSearchTimer.AutoReset = false;
 
+            // Initialize payment properties
             PaidAmount = 0;
             AddToCustomerDebt = false;
             AmountToDebt = 0;
 
             // Initialize commands
-            PrintDrawerReportCommand = new RelayCommand(async param => await PrintDrawerReportAsync(), param => IsDrawerOpen);
-            CashOutCommand = new RelayCommand(async param => await ShowCashOutDialogAsync(), param => IsDrawerOpen);
+            LogoutCommand = new RelayCommand(param => Logout());
+
+            // Transaction navigation commands
+            NextTransactionCommand = new RelayCommand(
+                async param => await NavigateToNextTransactionAsync(),
+                param => IsTransactionLoaded && CanNavigateNext);
+
+            PreviousTransactionCommand = new RelayCommand(
+                async param => await NavigateToPreviousTransactionAsync(),
+                param => IsTransactionLoaded && CanNavigatePrevious);
+
+            // Cart management commands
+            HoldCartCommand = new RelayCommand(param => HoldCurrentCart(), param => CanHoldCart());
+            RestoreCartCommand = new RelayCommand(param => RestoreHeldCart(), param => CanRestoreCart());
+
+            // Search commands
             SearchBarcodeCommand = new RelayCommand(async param => await SearchByBarcodeAsync());
             SearchNameCommand = new RelayCommand(async param => await SearchByNameAsync());
             SearchCustomersCommand = new RelayCommand(async param => await SearchCustomersAsync());
+
+            // Cart item commands
             AddToCartCommand = new RelayCommand(param => AddToCart(param as Product));
             RemoveFromCartCommand = new RelayCommand(param => RemoveFromCart(param as CartItem), param => param != null);
             ClearCartCommand = new RelayCommand(param => ClearCart());
-            OpenRecoveryDialogCommand = new RelayCommand(param => OpenRecoveryDialog());
-            CheckForFailedTransactionsAsync().ConfigureAwait(false);
-            CheckoutCommand = new RelayCommand(async param => await CheckoutAsync(),
-    param => CanCheckout && IsDrawerOpen);
-
             AddToCartAsBoxCommand = new RelayCommand(param => AddToCart(param as Product, true, false));
             AddToCartAsWholesaleCommand = new RelayCommand(param => AddToCart(param as Product, false, true));
             AddToCartAsWholesaleBoxCommand = new RelayCommand(param => AddToCart(param as Product, true, true));
 
-
-            PrintDrawerReportCommand = new RelayCommand(async param => await PrintDrawerReportAsync(), param => IsDrawerOpen);
-            CheckoutCommand = new RelayCommand(async param => await CheckoutAsync(), param => CanCheckout);
-            AddCustomerCommand = new RelayCommand(param => OpenAddCustomerDialog());
-            SelectCustomerCommand = new RelayCommand(param => OpenCustomerSelectionDialog());
-            OpenDrawerCommand = new RelayCommand(async param => await OpenDrawerDialogAsync());
-            CloseDrawerCommand = new RelayCommand(async param => await CloseDrawerDialogAsync(), param => IsDrawerOpen);
+            // Transaction commands
+            CheckoutCommand = new RelayCommand(async param => await CheckoutAsync(), param => CanCheckout && IsDrawerOpen);
             PrintReceiptCommand = new RelayCommand(param => PrintReceipt(), param => IsTransactionLoaded);
             LookupTransactionCommand = new RelayCommand(async param =>
             {
@@ -401,18 +408,28 @@ namespace QuickTechPOS.ViewModels
                 }
                 await LookupTransactionAsync();
             });
-
             EditTransactionCommand = new RelayCommand(param => EnterEditMode(), param => IsTransactionLoaded && !IsEditMode);
             SaveTransactionCommand = new RelayCommand(async param => await SaveTransactionChangesAsync(), param => IsTransactionLoaded && IsEditMode);
-          
 
-            NextTransactionCommand = new RelayCommand(async param => await NavigateToNextTransactionAsync(), param => CanNavigateNext);
-            PreviousTransactionCommand = new RelayCommand(async param => await NavigateToPreviousTransactionAsync(), param => CanNavigatePrevious);
+            // Drawer commands
+            PrintDrawerReportCommand = new RelayCommand(async param => await PrintDrawerReportAsync(), param => IsDrawerOpen);
+            CashOutCommand = new RelayCommand(async param => await ShowCashOutDialogAsync(), param => IsDrawerOpen);
+            OpenDrawerCommand = new RelayCommand(async param => await OpenDrawerDialogAsync());
+            CloseDrawerCommand = new RelayCommand(async param => await CloseDrawerDialogAsync(), param => IsDrawerOpen);
 
+            // Recovery command
+            OpenRecoveryDialogCommand = new RelayCommand(param => OpenRecoveryDialog());
+
+            // Customer commands
+            AddCustomerCommand = new RelayCommand(param => OpenAddCustomerDialog());
+            SelectCustomerCommand = new RelayCommand(param => OpenCustomerSelectionDialog());
+
+            // Initial data loading
             LoadInitialProductsAsync();
             LoadInitialCustomersAsync();
             GetCurrentDrawerAsync().ConfigureAwait(false);
             LoadExchangeRateAsync();
+            CheckForFailedTransactionsAsync().ConfigureAwait(false);
         }
         private async Task CheckForFailedTransactionsAsync()
         {
@@ -1628,10 +1645,14 @@ namespace QuickTechPOS.ViewModels
                 // Recalculate discount if it's a percentage-based discount
                 if (existingItem.DiscountType == 1)
                 {
-                    // Store the current percentage
-                    decimal percentage = existingItem.DiscountValue;
-                    // Update the discount amount based on the new quantity
-                    existingItem.DiscountValue = percentage;
+                    // Get current percentage without triggering property updates
+                    decimal currentPercentage = existingItem.DiscountValue;
+
+                    // Ensure the subtotal is calculated with the updated quantity
+                    decimal subtotal = existingItem.Quantity * existingItem.UnitPrice;
+
+                    // Set the actual discount amount directly, avoiding the property setter
+                    existingItem.Discount = (currentPercentage / 100) * subtotal;
                 }
 
                 // Force UI refresh by removing and re-adding the item

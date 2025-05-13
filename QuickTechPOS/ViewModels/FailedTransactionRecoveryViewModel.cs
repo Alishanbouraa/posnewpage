@@ -128,17 +128,24 @@ namespace QuickTechPOS.ViewModels
         /// </summary>
         public FailedTransactionRecoveryViewModel()
         {
-            _failedTransactionService = new FailedTransactionService();
+            // Initialize basic services
             _productService = new ProductService();
             _drawerService = new DrawerService();
 
+            // Create services with proper dependency injection to break circular dependency
+            var transactionService = new TransactionService(); // Create this first without passing FailedTransactionService
+            _failedTransactionService = new FailedTransactionService(transactionService); // Pass TransactionService to FailedTransactionService
+
+            // Initialize collections
             FailedTransactions = new ObservableCollection<FailedTransaction>();
             CartItems = new ObservableCollection<CartItem>();
 
+            // Initialize commands
             RefreshCommand = new RelayCommand(async param => await LoadFailedTransactionsAsync());
             RetryCommand = new RelayCommand(async param => await RetryTransactionAsync(), param => CanRetrySelected && !_isRetrying);
             CancelTransactionCommand = new RelayCommand(async param => await CancelTransactionAsync(), param => IsTransactionSelected && !_isRetrying);
 
+            // Set initial status and load data
             StatusMessage = "Loading failed transactions...";
             LoadFailedTransactionsAsync().ConfigureAwait(false);
         }

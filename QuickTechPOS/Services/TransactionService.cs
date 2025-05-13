@@ -3,27 +3,47 @@ using QuickTechPOS.Models;
 using QuickTechPOS.Models.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace QuickTechPOS.Services
 {
-    public class TransactionService
+    public class TransactionService : ITransactionService
     {
         private readonly DatabaseContext _dbContext;
         private readonly ProductService _productService;
-        private readonly FailedTransactionService _failedTransactionService;
+        private readonly Func<FailedTransactionService> _failedTransactionServiceFactory;
+        private FailedTransactionService _lazyFailedTransactionService;
 
         public TransactionService()
         {
             _dbContext = new DatabaseContext(ConfigurationService.ConnectionString);
             _productService = new ProductService();
-            _failedTransactionService = new FailedTransactionService();
+            _failedTransactionServiceFactory = () => new FailedTransactionService(this);
         }
 
-        // File: QuickTechPOS/Services/TransactionService.cs - Update the CreateTransactionAsync method
+        // Constructor with dependency injection for FailedTransactionService
+        public TransactionService(FailedTransactionService failedTransactionService)
+        {
+            _dbContext = new DatabaseContext(ConfigurationService.ConnectionString);
+            _productService = new ProductService();
+            _lazyFailedTransactionService = failedTransactionService;
+            _failedTransactionServiceFactory = null;
+        }
+
+        // Lazy loading property for FailedTransactionService
+        private FailedTransactionService FailedTransactionService
+        {
+            get
+            {
+                if (_lazyFailedTransactionService == null && _failedTransactionServiceFactory != null)
+                {
+                    _lazyFailedTransactionService = _failedTransactionServiceFactory();
+                }
+                return _lazyFailedTransactionService;
+            }
+        }
 
         public async Task<Transaction> CreateTransactionAsync(
             List<CartItem> items,
@@ -217,7 +237,7 @@ namespace QuickTechPOS.Services
                 // Record the failed transaction for later retry
                 try
                 {
-                    await _failedTransactionService.RecordFailedTransactionAsync(
+                    await FailedTransactionService.RecordFailedTransactionAsync(
                         newTransaction,
                         items,
                         cashier,
