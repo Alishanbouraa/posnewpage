@@ -438,12 +438,40 @@ namespace QuickTechPOS.ViewModels
                 var failedTransactionService = new FailedTransactionService();
                 var transactions = await failedTransactionService.GetFailedTransactionsAsync();
 
+                int previousCount = PendingTransactionCount;
                 PendingTransactionCount = transactions.Count;
                 OnPropertyChanged(nameof(HasPendingTransactions));
 
                 if (PendingTransactionCount > 0)
                 {
-                    StatusMessage = $"There are {PendingTransactionCount} failed transactions that need attention.";
+                    // If this is a new failed transaction (count increased), show a more prominent alert
+                    if (PendingTransactionCount > previousCount)
+                    {
+                        string message = $"⚠️ ATTENTION: {PendingTransactionCount} failed transaction(s) need attention in the recovery center.";
+                        StatusMessage = message;
+
+                        // Optionally, you could also show a message box for immediate attention
+                        if (PendingTransactionCount == 1 && previousCount == 0)
+                        {
+                            Application.Current.Dispatcher.Invoke(() => {
+                                MessageBox.Show(
+                                    "A transaction has failed and has been moved to the recovery center. " +
+                                    "Please review it at your earliest convenience.",
+                                    "Transaction Recovery Required",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Warning);
+                            });
+                        }
+                    }
+                    else
+                    {
+                        StatusMessage = $"There are {PendingTransactionCount} failed transactions that need attention.";
+                    }
+                }
+                else if (previousCount > 0 && PendingTransactionCount == 0)
+                {
+                    // All transactions have been recovered
+                    StatusMessage = "All failed transactions have been successfully resolved. System ready.";
                 }
             }
             catch (Exception ex)
@@ -1764,24 +1792,28 @@ namespace QuickTechPOS.ViewModels
             {
                 if (!IsDrawerOpen)
                 {
+                    ShowErrorPopup("Drawer is Closed", "Cannot checkout: Drawer is closed. Please open a drawer first.");
                     StatusMessage = "Cannot checkout: Drawer is closed. Please open a drawer first.";
                     return;
                 }
 
                 if (CartItems.Count == 0)
                 {
+                    ShowErrorPopup("Empty Cart", "Cart is empty. Cannot checkout.");
                     StatusMessage = "Cart is empty. Cannot checkout.";
                     return;
                 }
 
                 if (PaidAmount < 0)
                 {
+                    ShowErrorPopup("Invalid Payment", "Payment amount cannot be negative.");
                     StatusMessage = "Payment amount cannot be negative.";
                     return;
                 }
 
                 if (AddToCustomerDebt && AmountToDebt > 0 && (CustomerId <= 0 || CustomerName == "Walk-in Customer"))
                 {
+                    ShowErrorPopup("Customer Required", "Cannot add debt to a walk-in customer. Please select a registered customer.");
                     StatusMessage = "Cannot add debt to a walk-in customer. Please select a registered customer.";
                     return;
                 }
@@ -1799,6 +1831,7 @@ namespace QuickTechPOS.ViewModels
                 var currentEmployee = _authService.CurrentEmployee;
                 if (currentEmployee == null)
                 {
+                    ShowErrorPopup("Authentication Error", "No cashier is logged in. Please log in first.");
                     StatusMessage = "Error: No cashier is logged in.";
                     IsProcessing = false;
                     Console.WriteLine("Checkout failed: No cashier logged in");
@@ -1829,6 +1862,7 @@ namespace QuickTechPOS.ViewModels
                         }
                         else
                         {
+                            ShowErrorPopup("Customer Error", "Cannot proceed without a valid customer ID. Please select a customer.");
                             StatusMessage = "Error: Cannot proceed without a valid customer ID. Please select a customer.";
                             IsProcessing = false;
                             Console.WriteLine("Checkout failed: No valid walk-in customer");
@@ -1846,17 +1880,45 @@ namespace QuickTechPOS.ViewModels
                 Console.WriteLine($"Cashier: {currentEmployee.FullName} (ID: {currentEmployee.EmployeeId})");
                 Console.WriteLine($"Customer: {customerNameForTransaction} (ID: {customerIdForTransaction})");
 
-                var transaction = await _transactionService.CreateTransactionAsync(
-                    CartItems.ToList(),
-                    PaidAmount,
-                    currentEmployee,
-                    "Cash",
-                    customerNameForTransaction,
-                    customerIdForTransaction
-                );
+                Transaction transaction;
+                try
+                {
+                    transaction = await _transactionService.CreateTransactionAsync(
+                        CartItems.ToList(),
+                        PaidAmount,
+                        currentEmployee,
+                        "Cash",
+                        customerNameForTransaction,
+                        customerIdForTransaction
+                    );
+                }
+                catch (Exception ex)
+                {
+                    // Parse the error message to detect specific issues
+                    string errorTitle = "Checkout Error";
+                    string errorMsg = ex.Message;
+
+                    // Special handling for inventory-related errors
+                    if (ex.Message.Contains("Insufficient stock") ||
+                        (ex.InnerException != null && ex.InnerException.Message.Contains("Insufficient stock")))
+                    {
+                        // Extract the product name and quantities from the error message
+                        string errorText = ex.InnerException?.Message ?? ex.Message;
+                        errorTitle = "Inventory Error";
+                        errorMsg = errorText;
+                    }
+
+                    ShowErrorPopup(errorTitle, errorMsg);
+
+                    StatusMessage = $"Error during checkout: {ex.Message}";
+                    IsProcessing = false;
+                    await CheckForFailedTransactionsAsync();
+                    return;
+                }
 
                 if (transaction == null || transaction.TransactionId <= 0)
                 {
+                    ShowErrorPopup("Transaction Failed", "Failed to create transaction record. The system could not complete the sale.");
                     StatusMessage = "Error: Failed to create transaction record.";
                     IsProcessing = false;
                     Console.WriteLine("Checkout failed: Transaction record creation failed");
@@ -1866,7 +1928,7 @@ namespace QuickTechPOS.ViewModels
                 Console.WriteLine($"Transaction #{transaction.TransactionId} created successfully");
                 Console.WriteLine($"- Total Amount: {transaction.TotalAmount:C2}, Paid Amount: {transaction.PaidAmount:C2}");
 
-                // Updated receipt printing using the new service method
+                // Print receipt
                 string receiptResult = await _receiptPrinterService.PrintTransactionReceiptWpfAsync(
                     transaction,
                     CartItems.ToList(),
@@ -1923,57 +1985,45 @@ namespace QuickTechPOS.ViewModels
                     }
                 }
 
+                // Store the transaction ID for reference but don't load it
                 TransactionLookupId = transaction.TransactionId.ToString();
 
-                CartItems.Clear();
-                UpdateTotals();
+                // Reset transaction state for a new sale
+                ResetTransactionState();
 
-                if (CustomerId > 0 && CustomerName != "Walk-in Customer")
-                {
-                    if (_walkInCustomer != null)
-                    {
-                        CustomerId = _walkInCustomer.CustomerId;
-                    }
-                    else
-                    {
-                        CustomerId = 0;
-                    }
-
-                    CustomerName = "Walk-in Customer";
-                    SelectedCustomer = null;
-                    OnPropertyChanged(nameof(CustomerName));
-                    OnPropertyChanged(nameof(CustomerId));
-                }
-
-                PaidAmount = 0;
-                AddToCustomerDebt = false;
-                AmountToDebt = 0;
-                UseExchangeRate = true;
-
-                await LookupTransactionAsync();
-
+                // Load initial products to refresh the product list
                 LoadInitialProductsAsync();
 
-                StatusMessage = $"Transaction #{transaction.TransactionId} completed successfully.";
+                // Build success message
+                string successMessage = $"Transaction #{transaction.TransactionId} completed successfully.";
                 if (printed)
                 {
-                    StatusMessage += " Receipt printed.";
+                    successMessage += " Receipt printed.";
                 }
                 if (AddToCustomerDebt && AmountToDebt > 0)
                 {
-                    StatusMessage += $" Added {AmountToDebt:C2} to customer balance.";
+                    successMessage += $" Added {AmountToDebt:C2} to customer balance.";
                 }
+
+                successMessage += " Ready for new transaction.";
+                StatusMessage = successMessage;
 
                 Console.WriteLine("Checkout process completed successfully");
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Error during checkout: {ex.Message}";
+                string errorTitle = "Checkout Error";
+                string errorMessage = ex.Message;
+
+                // Check for nested exception that might have more specific details
                 if (ex.InnerException != null)
                 {
-                    StatusMessage += $" Inner exception: {ex.InnerException.Message}";
+                    errorMessage = $"{errorMessage}\n\nDetails: {ex.InnerException.Message}";
                 }
 
+                ShowErrorPopup(errorTitle, errorMessage);
+
+                StatusMessage = $"Error during checkout: {ex.Message}";
                 Console.WriteLine($"Checkout error: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
 
@@ -1981,11 +2031,98 @@ namespace QuickTechPOS.ViewModels
                 {
                     Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
                 }
+
+                // Ensure that CheckForFailedTransactionsAsync is called to update the UI
+                // with the new pending transaction count
+                await CheckForFailedTransactionsAsync();
             }
             finally
             {
                 IsProcessing = false;
             }
+        }
+
+        /// <summary>
+        /// Displays an error popup with the specified title and message
+        /// </summary>
+        /// <param name="title">The title of the error popup</param>
+        /// <param name="message">The detailed error message to display</param>
+        private void ShowErrorPopup(string title, string message)
+        {
+            try
+            {
+                // Ensure UI operations run on the UI thread
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    // Format the title to make it clear this is an error
+                    string formattedTitle = title.Contains("Error") ? title : $"{title} Error";
+
+                    // Show the message box with the error details
+                    MessageBox.Show(
+                        message,
+                        formattedTitle,
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                });
+
+                // Log the error for troubleshooting
+                Console.WriteLine($"[ERROR POPUP] {title}: {message}");
+            }
+            catch (Exception ex)
+            {
+                // If showing the popup itself fails, log this error but don't crash
+                Console.WriteLine($"Failed to show error popup: {ex.Message}");
+            }
+        }
+        /// <summary>
+        /// Resets the transaction state for a new sale
+        /// </summary>
+        private void ResetTransactionState()
+        {
+            // Clear cart items
+            CartItems.Clear();
+
+            // Reset totals
+            UpdateTotals();
+
+            // Reset customer to walk-in if needed
+            if (CustomerId > 0 && CustomerName != "Walk-in Customer")
+            {
+                if (_walkInCustomer != null)
+                {
+                    CustomerId = _walkInCustomer.CustomerId;
+                }
+                else
+                {
+                    CustomerId = 0;
+                }
+
+                CustomerName = "Walk-in Customer";
+                SelectedCustomer = null;
+                OnPropertyChanged(nameof(CustomerName));
+                OnPropertyChanged(nameof(CustomerId));
+            }
+
+            // Reset payment-related properties
+            PaidAmount = 0;
+            AddToCustomerDebt = false;
+            AmountToDebt = 0;
+            UseExchangeRate = true;
+
+            // Reset transaction state properties
+            LoadedTransaction = null;
+            IsTransactionLoaded = false;
+            IsEditMode = false;
+            CanNavigateNext = false;
+            CanNavigatePrevious = false;
+
+            // Ensure UI reflects these changes
+            OnPropertyChanged(nameof(IsTransactionLoaded));
+            OnPropertyChanged(nameof(LoadedTransaction));
+            OnPropertyChanged(nameof(CanCheckout));
+
+            // Force UI command reevaluation
+            CommandManager.InvalidateRequerySuggested();
         }
         private void Logout()
         {

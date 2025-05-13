@@ -226,7 +226,7 @@ namespace QuickTechPOS.Services
                         return false;
                     }
 
-                    // Validate stock availability
+                    // Validate stock availability with a more detailed error message
                     var product = await _productService.GetProductByIdAsync(item.Product.ProductId);
                     if (product == null)
                     {
@@ -240,17 +240,17 @@ namespace QuickTechPOS.Services
                         // Check box stock
                         if (product.NumberOfBoxes < Math.Floor(item.Quantity))
                         {
-                            context.ErrorMessage = $"Insufficient box stock for {product.Name}. Available: {product.NumberOfBoxes}, Required: {Math.Floor(item.Quantity)}";
+                            context.ErrorMessage = $"Insufficient stock for {product.Name}. Available: {product.NumberOfBoxes} boxes, Required: {Math.Floor(item.Quantity)} boxes.";
                             context.FailureComponent = "Inventory";
                             return false;
                         }
                     }
                     else
                     {
-                        // Check individual item stock
+                        // Check individual item stock with a clearer error message
                         if (product.CurrentStock < item.Quantity)
                         {
-                            context.ErrorMessage = $"Insufficient stock for {product.Name}. Available: {product.CurrentStock}, Required: {item.Quantity}";
+                            context.ErrorMessage = $"Insufficient stock for {product.Name}. Available: {product.CurrentStock:F2}, Required: {item.Quantity:F2}";
                             context.FailureComponent = "Inventory";
                             return false;
                         }
@@ -294,7 +294,7 @@ namespace QuickTechPOS.Services
                     // If not adding to debt, ensure payment covers the total
                     if (context.PaidAmount < totalAmount)
                     {
-                        context.ErrorMessage = "Payment amount is less than total amount";
+                        context.ErrorMessage = $"Payment amount (${context.PaidAmount:F2}) is less than total amount (${totalAmount:F2})";
                         context.FailureComponent = "Payment";
                         return false;
                     }
@@ -310,7 +310,6 @@ namespace QuickTechPOS.Services
                 return false;
             }
         }
-
         private async Task<bool> RecordTransactionAsync(TransactionContext context)
         {
             try
