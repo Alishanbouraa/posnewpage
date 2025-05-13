@@ -16,6 +16,8 @@ namespace QuickTechPOS.Models
         private int _discountType = 0;
         private bool _isBox = false;
         private bool _isWholesale = false;
+        private decimal? _cachedSubtotal;
+        private decimal? _cachedTotal;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -31,6 +33,7 @@ namespace QuickTechPOS.Models
                 {
                     _product = value;
                     OnPropertyChanged();
+                    InvalidateCache();
                 }
             }
         }
@@ -47,9 +50,7 @@ namespace QuickTechPOS.Models
                 {
                     _quantity = value;
                     OnPropertyChanged();
-                    // When quantity changes, also notify that Subtotal and Total have changed
-                    OnPropertyChanged(nameof(Subtotal));
-                    OnPropertyChanged(nameof(Total));
+                    InvalidateCache();
                 }
             }
         }
@@ -66,8 +67,7 @@ namespace QuickTechPOS.Models
                 {
                     _unitPrice = value;
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(Subtotal));
-                    OnPropertyChanged(nameof(Total));
+                    InvalidateCache();
                 }
             }
         }
@@ -84,7 +84,7 @@ namespace QuickTechPOS.Models
                 {
                     _discount = value;
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(Total));
+                    InvalidateCache();
                 }
             }
         }
@@ -103,6 +103,7 @@ namespace QuickTechPOS.Models
                     _discountType = value;
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(DiscountValue));
+                    InvalidateCache();
                 }
             }
         }
@@ -123,15 +124,29 @@ namespace QuickTechPOS.Models
                     // When changing between box and individual item, update the price accordingly
                     if (Product != null)
                     {
-                        UnitPrice = _isBox ?
-                            (_isWholesale ? Product.BoxWholesalePrice : Product.BoxSalePrice) :
-                            (_isWholesale ? Product.WholesalePrice : Product.SalePrice);
+                        try
+                        {
+                            UnitPrice = _isBox ?
+                                (_isWholesale ? Product.BoxWholesalePrice : Product.BoxSalePrice) :
+                                (_isWholesale ? Product.WholesalePrice : Product.SalePrice);
+                        }
+                        catch
+                        {
+                            // Fallback if properties are inaccessible
+                            if (_isBox)
+                            {
+                                UnitPrice = _isWholesale ? Product.BoxWholesalePrice : Product.BoxSalePrice;
+                            }
+                            else
+                            {
+                                UnitPrice = _isWholesale ? Product.WholesalePrice : Product.SalePrice;
+                            }
+                        }
                     }
 
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(DisplayName));
-                    OnPropertyChanged(nameof(Subtotal));
-                    OnPropertyChanged(nameof(Total));
+                    InvalidateCache();
                 }
             }
         }
@@ -152,14 +167,28 @@ namespace QuickTechPOS.Models
                     // When changing between retail and wholesale, update the price accordingly
                     if (Product != null)
                     {
-                        UnitPrice = _isBox ?
-                            (_isWholesale ? Product.BoxWholesalePrice : Product.BoxSalePrice) :
-                            (_isWholesale ? Product.WholesalePrice : Product.SalePrice);
+                        try
+                        {
+                            UnitPrice = _isBox ?
+                                (_isWholesale ? Product.BoxWholesalePrice : Product.BoxSalePrice) :
+                                (_isWholesale ? Product.WholesalePrice : Product.SalePrice);
+                        }
+                        catch
+                        {
+                            // Fallback if properties are inaccessible
+                            if (_isBox)
+                            {
+                                UnitPrice = _isWholesale ? Product.BoxWholesalePrice : Product.BoxSalePrice;
+                            }
+                            else
+                            {
+                                UnitPrice = _isWholesale ? Product.WholesalePrice : Product.SalePrice;
+                            }
+                        }
                     }
 
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(Subtotal));
-                    OnPropertyChanged(nameof(Total));
+                    InvalidateCache();
                 }
             }
         }
@@ -168,7 +197,24 @@ namespace QuickTechPOS.Models
         /// Gets a display name that indicates if this is a box
         /// </summary>
         [NotMapped]
-        public string DisplayName => IsBox ? $"BOX-{Product?.Name}" : Product?.Name;
+        public string DisplayName
+        {
+            get
+            {
+                if (Product == null)
+                    return "Unknown Product";
+
+                try
+                {
+                    return IsBox ? $"BOX-{Product.Name}" : Product.Name;
+                }
+                catch
+                {
+                    // Fallback if properties are inaccessible
+                    return IsBox ? "BOX-Product" : "Product";
+                }
+            }
+        }
 
         /// <summary>
         /// Discount value (amount or percentage)
@@ -176,21 +222,34 @@ namespace QuickTechPOS.Models
         [NotMapped]
         public decimal DiscountValue
         {
-            get => DiscountType == 0 ? Discount : (Discount / Subtotal) * 100;
+            get
+            {
+                try
+                {
+                    return DiscountType == 0 ? Discount : (Discount / CalculateSubtotal()) * 100;
+                }
+                catch
+                {
+                    return 0;
+                }
+            }
             set
             {
                 if (DiscountType == 0)
                 {
                     // Amount-based discount
-                    Discount = value > Subtotal ? Subtotal : value;
+                    decimal subtotal = CalculateSubtotal();
+                    Discount = value > subtotal ? subtotal : value;
                 }
                 else
                 {
                     // Percentage-based discount
                     decimal percentage = value > 100 ? 100 : value;
-                    Discount = (percentage / 100) * Subtotal;
+                    decimal subtotal = CalculateSubtotal();
+                    Discount = (percentage / 100) * subtotal;
                 }
                 OnPropertyChanged();
+                InvalidateCache();
             }
         }
 
@@ -198,20 +257,84 @@ namespace QuickTechPOS.Models
         /// Gets the subtotal for this item (Quantity * UnitPrice)
         /// </summary>
         [NotMapped]
-        public decimal Subtotal => Quantity * UnitPrice;
+        public decimal Subtotal
+        {
+            get
+            {
+                if (!_cachedSubtotal.HasValue)
+                {
+                    _cachedSubtotal = CalculateSubtotal();
+                }
+                return _cachedSubtotal.Value;
+            }
+        }
 
         /// <summary>
         /// Gets the total amount for this item (Subtotal - Discount)
         /// </summary>
         [NotMapped]
-        public decimal Total => Subtotal - Discount;
+        public decimal Total
+        {
+            get
+            {
+                if (!_cachedTotal.HasValue)
+                {
+                    _cachedTotal = CalculateTotal();
+                }
+                return _cachedTotal.Value;
+            }
+        }
 
         /// <summary>
         /// Gets the number of individual items this cart item represents
         /// </summary>
         [NotMapped]
-        public decimal TotalItemQuantity => IsBox ? Quantity * Product.ItemsPerBox : Quantity;
+        public decimal TotalItemQuantity
+        {
+            get
+            {
+                try
+                {
+                    return IsBox && Product != null ? Quantity * Product.ItemsPerBox : Quantity;
+                }
+                catch
+                {
+                    return Quantity;
+                }
+            }
+        }
 
+        /// <summary>
+        /// Invalidates cached calculations
+        /// </summary>
+        private void InvalidateCache()
+        {
+            _cachedSubtotal = null;
+            _cachedTotal = null;
+            OnPropertyChanged(nameof(Subtotal));
+            OnPropertyChanged(nameof(Total));
+            OnPropertyChanged(nameof(TotalItemQuantity));
+        }
+
+        /// <summary>
+        /// Calculates the subtotal directly
+        /// </summary>
+        private decimal CalculateSubtotal()
+        {
+            return Quantity * UnitPrice;
+        }
+
+        /// <summary>
+        /// Calculates the total directly
+        /// </summary>
+        private decimal CalculateTotal()
+        {
+            return CalculateSubtotal() - Discount;
+        }
+
+        /// <summary>
+        /// Raises property changed notifications
+        /// </summary>
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

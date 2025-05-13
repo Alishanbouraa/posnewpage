@@ -327,98 +327,137 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-
                 <!-- App Title -->
                 <TextBlock Grid.Column="0" 
-                           Text="{DynamicResource ApplicationTitle}" 
-                           FontSize="22" 
-                           FontWeight="Bold" 
-                           Foreground="White" 
-                           VerticalAlignment="Center"/>
-
+                   Text="{DynamicResource ApplicationTitle}" 
+                   FontSize="22" 
+                   FontWeight="Bold" 
+                   Foreground="White" 
+                   VerticalAlignment="Center"/>
                 <!-- Drawer Status -->
                 <StackPanel Grid.Column="1" 
-                            Orientation="Horizontal" 
-                            HorizontalAlignment="Center" 
-                            VerticalAlignment="Center">
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center">
                     <TextBlock Text="{DynamicResource Drawer}" 
-                               Foreground="#94A3B8" 
-                               FontWeight="Bold" 
-                               VerticalAlignment="Center"
-                               Margin="0,0,5,0"/>
-
+                       Foreground="#94A3B8" 
+                       FontWeight="Bold" 
+                       VerticalAlignment="Center"
+                       Margin="0,0,5,0"/>
                     <Border Background="#059669" 
-                            CornerRadius="3"
-                            Padding="8,4"
-                            Visibility="{Binding IsDrawerOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    CornerRadius="3"
+                    Padding="8,4"
+                    Visibility="{Binding IsDrawerOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <TextBlock Text="{DynamicResource DrawerOpen}" 
-                                   Foreground="White" 
-                                   FontWeight="Bold" 
-                                   VerticalAlignment="Center"/>
+                           Foreground="White" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center"/>
                     </Border>
-
                     <Border Background="#DC2626" 
-                            CornerRadius="3"
-                            Padding="8,4"
-                            Visibility="{Binding IsDrawerOpen, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    CornerRadius="3"
+                    Padding="8,4"
+                    Visibility="{Binding IsDrawerOpen, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                         <TextBlock Text="{DynamicResource DrawerClosed}" 
-                                   Foreground="White" 
-                                   FontWeight="Bold" 
-                                   VerticalAlignment="Center"/>
+                           Foreground="White" 
+                           FontWeight="Bold" 
+                           VerticalAlignment="Center"/>
                     </Border>
                 </StackPanel>
-
                 <!-- Price Mode Selector -->
                 <StackPanel Grid.Column="2" 
-                            Orientation="Horizontal" 
-                            Margin="0,0,10,0"
-                            VerticalAlignment="Center">
+                    Orientation="Horizontal" 
+                    Margin="0,0,10,0"
+                    VerticalAlignment="Center">
                     <TextBlock Text="{DynamicResource PriceMode}" 
-                               Foreground="White" 
-                               VerticalAlignment="Center"
-                               Margin="0,0,8,0"/>
+                       Foreground="White" 
+                       VerticalAlignment="Center"
+                       Margin="0,0,8,0"/>
                     <ComboBox Width="120" 
-                              Height="30"
-                              Style="{StaticResource ComboBoxStyle}"
-                              SelectedIndex="{Binding WholesaleMode, Converter={StaticResource BooleanToIndexConverter}}">
+                      Height="30"
+                      Style="{StaticResource ComboBoxStyle}"
+                      SelectedIndex="{Binding WholesaleMode, Converter={StaticResource BooleanToIndexConverter}}">
                         <ComboBoxItem Content="{DynamicResource RetailMode}"/>
                         <ComboBoxItem Content="{DynamicResource WholesaleMode}"/>
                     </ComboBox>
                 </StackPanel>
-
+                <!-- Recovery Center Button -->
+                <Button Grid.Column="3"
+        Command="{Binding OpenRecoveryDialogCommand}"
+        Background="#F59E0B"
+        Foreground="White"
+        BorderThickness="0"
+        Padding="20,8"
+        MinWidth="100"
+        Margin="0,0,10,0">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                CornerRadius="4">
+                                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#D97706"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasPendingTransactions}" Value="True">
+                                    <Setter Property="Background" Value="#D81B60"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <Button.Content>
+                        <TextBlock>
+                            <TextBlock.Text>
+                                <MultiBinding StringFormat="{}{0}{1}">
+                                    <Binding Source="Recovery Center"/>
+                                    <Binding Path="HasPendingTransactions" Converter="{StaticResource BooleanToStringConverter}" ConverterParameter=" (!)| "/>
+                                </MultiBinding>
+                            </TextBlock.Text>
+                        </TextBlock>
+                    </Button.Content>
+                </Button>
                 <!-- Open Drawer Button -->
-                <Button Grid.Column="3" 
-                        Content="{DynamicResource OpenDrawerBtn}" 
-                        Command="{Binding OpenDrawerCommand}"
-                        Style="{StaticResource SuccessButton}"
-                        Margin="0,0,10,0"
-                        Visibility="{Binding IsDrawerOpen, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
-
-                <!-- Cash Out Button -->
                 <Button Grid.Column="4" 
-                        Content="{DynamicResource CashOutBtn}" 
-                        Command="{Binding CashOutCommand}"
-                        Style="{StaticResource WarningButton}"
-                        Margin="0,0,10,0"
-                        Visibility="{Binding IsDrawerOpen, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
-                <!-- Close Drawer Button -->
+                Content="{DynamicResource OpenDrawerBtn}" 
+                Command="{Binding OpenDrawerCommand}"
+                Style="{StaticResource SuccessButton}"
+                Margin="0,0,10,0"
+                Visibility="{Binding IsDrawerOpen, Converter={StaticResource InverseBooleanToVisibilityConverter}}"/>
+                <!-- Cash Out Button -->
                 <Button Grid.Column="5" 
-                        Content="{DynamicResource CloseDrawerBtn}" 
-                        Command="{Binding CloseDrawerCommand}"
-                        Style="{StaticResource DangerButton}"
-                        Margin="0,0,10,0"
-                        Visibility="{Binding IsDrawerOpen, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
-                <!-- Logout Button -->
+                Content="{DynamicResource CashOutBtn}" 
+                Command="{Binding CashOutCommand}"
+                Style="{StaticResource WarningButton}"
+                Margin="0,0,10,0"
+                Visibility="{Binding IsDrawerOpen, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <!-- Close Drawer Button -->
                 <Button Grid.Column="6" 
-                        Content="{DynamicResource LogoutButton}" 
-                        Command="{Binding LogoutCommand}"
-                        Style="{StaticResource SecondaryButton}"/>
+                Content="{DynamicResource CloseDrawerBtn}" 
+                Command="{Binding CloseDrawerCommand}"
+                Style="{StaticResource DangerButton}"
+                Margin="0,0,10,0"
+                Visibility="{Binding IsDrawerOpen, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <!-- Logout Button -->
+                <Button Grid.Column="7" 
+                Content="{DynamicResource LogoutButton}" 
+                Command="{Binding LogoutCommand}"
+                Style="{StaticResource SecondaryButton}"/>
             </Grid>
         </Border>
-
         <!-- Main Content Area -->
         <Grid Grid.Row="1" Margin="20">
             <Grid.ColumnDefinitions>

@@ -34,6 +34,11 @@ namespace QuickTechPOS.Services
         public DbSet<Transaction> Transactions { get; set; }
 
         /// <summary>
+        /// Failed transactions table in the database
+        /// </summary>
+        public DbSet<FailedTransaction> FailedTransactions { get; set; }
+
+        /// <summary>
         /// Transaction details table in the database
         /// </summary>
         public DbSet<TransactionDetail> TransactionDetails { get; set; }
@@ -161,6 +166,35 @@ namespace QuickTechPOS.Services
                     .WithMany()
                     .HasForeignKey(d => d.TransactionId)
                     .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            // Configure FailedTransaction entity
+            modelBuilder.Entity<FailedTransaction>(entity =>
+            {
+                entity.HasKey(ft => ft.FailedTransactionId);
+                entity.Property(ft => ft.ErrorMessage).HasMaxLength(1000);
+                entity.Property(ft => ft.ErrorDetails).HasMaxLength(4000);
+                entity.Property(ft => ft.FailureComponent).HasMaxLength(100);
+                entity.Property(ft => ft.CashierName).HasMaxLength(100);
+                entity.Property(ft => ft.CustomerName).HasMaxLength(200);
+                entity.Property(ft => ft.TotalAmount).HasColumnType("decimal(18,2)");
+                entity.Property(ft => ft.PaidAmount).HasColumnType("decimal(18,2)");
+                entity.Property(ft => ft.PaymentMethod).HasMaxLength(50);
+
+                // Convert FailedTransactionState enum to string in the database
+                entity.Property(ft => ft.State)
+                    .HasConversion<string>()
+                    .HasMaxLength(50);
+
+                // Convert TransactionType enum to string in the database
+                entity.Property(ft => ft.TransactionType)
+                    .HasConversion<string>()
+                    .HasMaxLength(50);
+
+                entity.HasOne(ft => ft.OriginalTransaction)
+                    .WithMany()
+                    .HasForeignKey(ft => ft.OriginalTransactionId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             // Configure Customer entity

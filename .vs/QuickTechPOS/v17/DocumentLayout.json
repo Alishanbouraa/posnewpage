@@ -1,12 +1,71 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Gundam\\Desktop\\12-5-2025 POS v5\\POS PAGE\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Users\\$\\Desktop\\12-5-2025 POS v5\\POS PAGE\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F9C58AF9-351C-472B-A00E-B9302CBEC20F}|QuickTechPOS\\QuickTechPOS.csproj|c:\\users\\$\\desktop\\12-5-2025 pos v5\\pos page\\quicktechpos\\services\\failedtransactionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9C58AF9-351C-472B-A00E-B9302CBEC20F}|QuickTechPOS\\QuickTechPOS.csproj|solutionrelative:quicktechpos\\services\\failedtransactionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F9C58AF9-351C-472B-A00E-B9302CBEC20F}|QuickTechPOS\\QuickTechPOS.csproj|c:\\users\\$\\desktop\\12-5-2025 pos v5\\pos page\\quicktechpos\\models\\cartitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9C58AF9-351C-472B-A00E-B9302CBEC20F}|QuickTechPOS\\QuickTechPOS.csproj|solutionrelative:quicktechpos\\models\\cartitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F9C58AF9-351C-472B-A00E-B9302CBEC20F}|QuickTechPOS\\QuickTechPOS.csproj|c:\\users\\$\\desktop\\12-5-2025 pos v5\\pos page\\quicktechpos\\models\\failedtransaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F9C58AF9-351C-472B-A00E-B9302CBEC20F}|QuickTechPOS\\QuickTechPOS.csproj|solutionrelative:quicktechpos\\models\\failedtransaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "FailedTransactionService.cs",
+              "DocumentMoniker": "C:\\Users\\$\\Desktop\\12-5-2025 POS v5\\POS PAGE\\QuickTechPOS\\Services\\FailedTransactionService.cs",
+              "RelativeDocumentMoniker": "QuickTechPOS\\Services\\FailedTransactionService.cs",
+              "ToolTip": "C:\\Users\\$\\Desktop\\12-5-2025 POS v5\\POS PAGE\\QuickTechPOS\\Services\\FailedTransactionService.cs",
+              "RelativeToolTip": "QuickTechPOS\\Services\\FailedTransactionService.cs",
+              "ViewState": "AgIAALoAAAAAAAAAAAAgwMgAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-13T11:09:08.61Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CartItem.cs",
+              "DocumentMoniker": "C:\\Users\\$\\Desktop\\12-5-2025 POS v5\\POS PAGE\\QuickTechPOS\\Models\\CartItem.cs",
+              "RelativeDocumentMoniker": "QuickTechPOS\\Models\\CartItem.cs",
+              "ToolTip": "C:\\Users\\$\\Desktop\\12-5-2025 POS v5\\POS PAGE\\QuickTechPOS\\Models\\CartItem.cs",
+              "RelativeToolTip": "QuickTechPOS\\Models\\CartItem.cs",
+              "ViewState": "AgIAAEMBAAAAAAAAAAAowFYBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-13T11:08:14.067Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "FailedTransaction.cs",
+              "DocumentMoniker": "C:\\Users\\$\\Desktop\\12-5-2025 POS v5\\POS PAGE\\QuickTechPOS\\Models\\FailedTransaction.cs",
+              "RelativeDocumentMoniker": "QuickTechPOS\\Models\\FailedTransaction.cs",
+              "ToolTip": "C:\\Users\\$\\Desktop\\12-5-2025 POS v5\\POS PAGE\\QuickTechPOS\\Models\\FailedTransaction.cs",
+              "RelativeToolTip": "QuickTechPOS\\Models\\FailedTransaction.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-13T11:07:34.197Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

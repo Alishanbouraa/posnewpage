@@ -23,7 +23,8 @@
                     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
                     <local:PositiveIntToVisibilityConverter x:Key="PositiveIntToVisibilityConverter"/>
                     <local:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
-
+                    <local:BooleanToStringConverter x:Key="BooleanToStringConverter"/>
+                    <local:BooleanToBrushConverter x:Key="BooleanToBrushConverter"/>
                     <!-- Inverse Boolean to Visibility Converter -->
                     <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
                     <local:DifferenceToColorConverter x:Key="DifferenceToColorConverter"/>

@@ -14,11 +14,13 @@ namespace QuickTechPOS.Services
     {
         private readonly DatabaseContext _dbContext;
         private readonly ProductService _productService;
+        private readonly FailedTransactionService _failedTransactionService;
 
         public TransactionService()
         {
             _dbContext = new DatabaseContext(ConfigurationService.ConnectionString);
             _productService = new ProductService();
+            _failedTransactionService = new FailedTransactionService();
         }
 
         // File: QuickTechPOS/Services/TransactionService.cs - Update the CreateTransactionAsync method
@@ -34,14 +36,15 @@ namespace QuickTechPOS.Services
             var stopwatch = Stopwatch.StartNew();
             Console.WriteLine($"Starting transaction creation at: {DateTime.Now}");
 
-            using var dbTransaction = await _dbContext.Database.BeginTransactionAsync();
+            var dbTransaction = await _dbContext.Database.BeginTransactionAsync();
+            Transaction newTransaction = null;
 
             try
             {
                 decimal totalAmount = items.Sum(item => item.Total);
                 Console.WriteLine($"Calculated total amount: {totalAmount:C2} from {items.Count} items");
 
-                var newTransaction = new Transaction
+                newTransaction = new Transaction
                 {
                     CustomerId = customerId == 0 ? null : customerId,
                     CustomerName = customerName ?? "Walk-in Customer",
@@ -57,9 +60,12 @@ namespace QuickTechPOS.Services
                 };
 
                 _dbContext.Transactions.Add(newTransaction);
+
+                // Save transaction to get ID but don't commit yet
                 await _dbContext.SaveChangesAsync();
                 Console.WriteLine($"Created transaction with ID: {newTransaction.TransactionId}");
 
+                // Record transaction details
                 foreach (var item in items)
                 {
                     if (item.Product == null || item.Product.ProductId <= 0)
@@ -81,7 +87,14 @@ namespace QuickTechPOS.Services
 
                     _dbContext.TransactionDetails.Add(detail);
                     Console.WriteLine($"Added transaction detail for product: {item.Product.Name}, Qty: {item.Quantity}, Total: {item.Total:C2}");
+                }
 
+                // Save transaction details
+                await _dbContext.SaveChangesAsync();
+
+                // Update inventory
+                foreach (var item in items)
+                {
                     try
                     {
                         // Check if the item is a box and update inventory accordingly
@@ -92,6 +105,7 @@ namespace QuickTechPOS.Services
                             if (!boxStockUpdated)
                             {
                                 Console.WriteLine($"Warning: Failed to update box stock for product {item.Product.ProductId}");
+                                throw new Exception($"Failed to update inventory for product {item.Product.Name}");
                             }
                             else
                             {
@@ -105,40 +119,18 @@ namespace QuickTechPOS.Services
                             if (!stockUpdated)
                             {
                                 Console.WriteLine($"Warning: Failed to update stock for product {item.Product.ProductId}");
+                                throw new Exception($"Failed to update inventory for product {item.Product.Name}");
                             }
                         }
                     }
                     catch (Exception stockEx)
                     {
                         Console.WriteLine($"Stock update error for product {item.Product.ProductId}: {stockEx.Message}");
+                        throw new Exception($"Inventory update failed: {stockEx.Message}", stockEx);
                     }
                 }
 
-                try
-                {
-                    await _dbContext.SaveChangesAsync();
-                }
-                catch (DbUpdateException dbEx)
-                {
-                    Console.WriteLine($"Database update error: {dbEx.Message}");
-                    if (dbEx.InnerException != null)
-                    {
-                        Console.WriteLine($"Inner exception: {dbEx.InnerException.Message}");
-                    }
-
-                    var validationErrors = dbEx.Entries
-                        .SelectMany(entry => entry.Entity.GetType().GetProperties())
-                        .Where(property => property.GetCustomAttributes(typeof(RequiredAttribute), false).Any())
-                        .Select(property => property.Name);
-
-                    if (validationErrors.Any())
-                    {
-                        Console.WriteLine($"Validation errors on properties: {string.Join(", ", validationErrors)}");
-                    }
-
-                    throw;
-                }
-
+                // Update drawer with sales amount
                 try
                 {
                     var drawerService = new DrawerService();
@@ -163,14 +155,28 @@ namespace QuickTechPOS.Services
                         _dbContext.DrawerTransactions.Add(drawerTransaction);
                         await _dbContext.SaveChangesAsync();
 
+                        // Update drawer
+                        await drawerService.UpdateDrawerTransactionsAsync(
+                            openDrawer.DrawerId,
+                            totalAmount, // Sales amount
+                            0,          // No expenses
+                            0           // No supplier payments
+                        );
+
                         Console.WriteLine($"Created drawer transaction for sale: {drawerTransaction.TransactionId}");
+                    }
+                    else
+                    {
+                        throw new Exception("No open drawer found for this transaction");
                     }
                 }
                 catch (Exception drawerEx)
                 {
-                    Console.WriteLine($"Error creating drawer transaction: {drawerEx.Message}");
+                    Console.WriteLine($"Error with drawer transaction: {drawerEx.Message}");
+                    throw new Exception($"Drawer update failed: {drawerEx.Message}", drawerEx);
                 }
 
+                // All steps completed successfully, commit the transaction
                 await dbTransaction.CommitAsync();
 
                 stopwatch.Stop();
@@ -180,6 +186,7 @@ namespace QuickTechPOS.Services
             }
             catch (Exception ex)
             {
+                // Rollback the database transaction
                 await dbTransaction.RollbackAsync();
 
                 Console.WriteLine($"ERROR in CreateTransactionAsync: {ex.Message}");
@@ -190,6 +197,36 @@ namespace QuickTechPOS.Services
                 {
                     Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
                     Console.WriteLine($"Inner exception type: {ex.InnerException.GetType().Name}");
+                }
+
+                // Determine which component failed
+                string failureComponent = "Unknown";
+                if (ex.Message.Contains("inventory") || ex.Message.Contains("stock"))
+                {
+                    failureComponent = "Inventory";
+                }
+                else if (ex.Message.Contains("drawer"))
+                {
+                    failureComponent = "Drawer";
+                }
+                else if (ex is DbUpdateException)
+                {
+                    failureComponent = "Database";
+                }
+
+                // Record the failed transaction for later retry
+                try
+                {
+                    await _failedTransactionService.RecordFailedTransactionAsync(
+                        newTransaction,
+                        items,
+                        cashier,
+                        ex,
+                        failureComponent);
+                }
+                catch (Exception recordEx)
+                {
+                    Console.WriteLine($"Error recording failed transaction: {recordEx.Message}");
                 }
 
                 throw new Exception($"Error during checkout: {ex.Message}. Inner exception: {ex.InnerException?.Message}", ex);

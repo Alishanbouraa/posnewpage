@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Gundam\Desktop\12-5-2025 POS v5\POS PAGE\QuickTechPOS\obj\Debug\net8.0-windows\
+C:\Users\$\Desktop\12-5-2025 POS v5\POS PAGE\QuickTechPOS\obj\Debug\net8.0-windows\
 QuickTechPOS
 none
 false
-TRACE;DEBUG;NET;NET8_0;NETCOREAPP
-C:\Users\Gundam\Desktop\12-5-2025 POS v5\POS PAGE\QuickTechPOS\App.xaml
-14137552085
+TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
+C:\Users\$\Desktop\12-5-2025 POS v5\POS PAGE\QuickTechPOS\App.xaml
+15-878320186
 11413424753
-61818654782
-2361498152771
-MainView.xaml;MainWindow.xaml;Resources\StringResources.ar.xaml;Resources\StringResources.fr.xaml;Resources\StringResources.xaml;Views\AddCustomerDialog.xaml;Views\CashOutDialog.xaml;Views\CloseDrawerDialog.xaml;Views\CustomerSelectionDialog.xaml;Views\LanguageSettingsDialog.xaml;Views\LoginView.xaml;Views\OpenDrawerDialog.xaml;Views\RestoreCartDialog.xaml;Views\TransactionView.xaml;
+671008044029
+236-1708384487
+MainView.xaml;MainWindow.xaml;Resources\StringResources.ar.xaml;Resources\StringResources.fr.xaml;Resources\StringResources.xaml;Views\AddCustomerDialog.xaml;Views\CashOutDialog.xaml;Views\CloseDrawerDialog.xaml;Views\CustomerSelectionDialog.xaml;Views\FailedTransactionRecoveryDialog.xaml;Views\LanguageSettingsDialog.xaml;Views\LoginView.xaml;Views\OpenDrawerDialog.xaml;Views\RestoreCartDialog.xaml;Views\TransactionView.xaml;
 
-False
+True
 

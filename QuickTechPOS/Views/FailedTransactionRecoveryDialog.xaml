@@ -1,0 +1,345 @@
+﻿<Window x:Class="QuickTechPOS.Views.FailedTransactionRecoveryDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QuickTechPOS.Views"
+        mc:Ignorable="d"
+        Title="Transaction Recovery Center" 
+        Height="600" 
+        Width="900"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Text="Transaction Recovery Center" 
+                       FontSize="22" 
+                       FontWeight="Bold" 
+                       Margin="0,0,0,5"/>
+            <TextBlock Text="Review and recover failed transactions" 
+                       FontSize="14" 
+                       Foreground="#555555"/>
+        </StackPanel>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1.5*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Failed Transactions List -->
+            <Border Grid.Column="0" 
+                    BorderBrush="#DDDDDD" 
+                    BorderThickness="1" 
+                    CornerRadius="4" 
+                    Background="#F9F9F9"
+                    Padding="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" 
+                               Text="Failed Transactions" 
+                               FontWeight="SemiBold" 
+                               Margin="5,5,5,10"/>
+
+                    <DataGrid Grid.Row="1" 
+                              x:Name="FailedTransactionsGrid"
+                              ItemsSource="{Binding FailedTransactions}"
+                              SelectedItem="{Binding SelectedFailedTransaction}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              IsReadOnly="True"
+                              GridLinesVisibility="Horizontal"
+                              AlternatingRowBackground="#F5F5F5"
+                              BorderThickness="0"
+                              SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding FailedTransactionId}" Width="50"/>
+                            <DataGridTextColumn Header="Date" Binding="{Binding FormattedAttemptDate}" Width="120"/>
+                            <DataGridTextColumn Header="Amount" Binding="{Binding TotalAmount, StringFormat=\${0:N2}}" Width="80"/>
+                            <DataGridTextColumn Header="Customer" Binding="{Binding CustomerName}" Width="120"/>
+                            <DataGridTextColumn Header="Cashier" Binding="{Binding CashierName}" Width="120"/>
+                            <DataGridTextColumn Header="Error" Binding="{Binding UserFriendlyError}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1" 
+                          Width="5" 
+                          HorizontalAlignment="Center" 
+                          VerticalAlignment="Stretch"
+                          Background="#DDDDDD"/>
+
+            <!-- Transaction Details -->
+            <Border Grid.Column="2" 
+                    BorderBrush="#DDDDDD" 
+                    BorderThickness="1" 
+                    CornerRadius="4" 
+                    Background="White"
+                    Padding="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <TextBlock Grid.Row="0" 
+                               Text="Transaction Details" 
+                               FontWeight="SemiBold" 
+                               Margin="0,0,0,10"/>
+
+                    <!-- Transaction Info -->
+                    <Grid Grid.Row="1" Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Transaction ID:" Margin="0,0,10,5" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedFailedTransaction.FailedTransactionId}" Margin="0,0,20,5"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="Date:" Margin="0,0,10,5" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="0" Grid.Column="3" Text="{Binding SelectedFailedTransaction.FormattedAttemptDate}" Margin="0,0,0,5"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Customer:" Margin="0,0,10,5" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedFailedTransaction.CustomerName}" Margin="0,0,20,5"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="Cashier:" Margin="0,0,10,5" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="1" Grid.Column="3" Text="{Binding SelectedFailedTransaction.CashierName}" Margin="0,0,0,5"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Total Amount:" Margin="0,0,10,5" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SelectedFailedTransaction.TotalAmount, StringFormat=\${0:N2}}" Margin="0,0,20,5"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="Payment:" Margin="0,0,10,5" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding SelectedFailedTransaction.PaymentMethod}" Margin="0,0,0,5"/>
+                    </Grid>
+
+                    <!-- Error Info -->
+                    <Grid Grid.Row="2" Margin="0,0,0,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Error Information" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <Border Grid.Row="1" 
+                                BorderBrush="#FFEEEE" 
+                                BorderThickness="1" 
+                                Background="#FFEEEE" 
+                                Padding="10"
+                                CornerRadius="4">
+                            <StackPanel>
+                                <TextBlock Text="{Binding SelectedFailedTransaction.ErrorMessage}" 
+                                           TextWrapping="Wrap" 
+                                           Foreground="#CC0000"/>
+                                <TextBlock Text="{Binding SelectedFailedTransaction.FailureComponent, StringFormat=Component: {0}}" 
+                                           Margin="0,5,0,0"
+                                           FontStyle="Italic"
+                                           FontSize="12"/>
+                                <TextBlock Text="{Binding SelectedFailedTransaction.RetryCount, StringFormat=Retry Count: {0}}" 
+                                           Margin="0,5,0,0"
+                                           FontStyle="Italic"
+                                           FontSize="12"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Cart Items -->
+                    <Grid Grid.Row="3">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Cart Items" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <DataGrid Grid.Row="1" 
+                                  x:Name="CartItemsGrid"
+                                  ItemsSource="{Binding CartItems}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal"
+                                  AlternatingRowBackground="#F9F9F9"
+                                  BorderThickness="1"
+                                  BorderBrush="#DDDDDD">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Product" Binding="{Binding Product.Name}" Width="*"/>
+                                <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="50"/>
+                                <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice, StringFormat=\${0:N2}}" Width="80"/>
+                                <DataGridTextColumn Header="Discount" Binding="{Binding Discount, StringFormat=\${0:N2}}" Width="80"/>
+                                <DataGridTextColumn Header="Total" Binding="{Binding Total, StringFormat=\${0:N2}}" Width="80"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+
+                    <!-- Suggestions -->
+                    <Border Grid.Row="4" 
+                            BorderBrush="#E8F4FF" 
+                            BorderThickness="1" 
+                            Background="#E8F4FF" 
+                            Padding="10"
+                            CornerRadius="4"
+                            Margin="0,10,0,10">
+                        <StackPanel>
+                            <TextBlock Text="Suggestions for Resolution" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                            <TextBlock Text="{Binding ResolutionSuggestion}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Action Buttons -->
+                    <StackPanel Grid.Row="5" 
+                                Orientation="Horizontal" 
+                                HorizontalAlignment="Right">
+                        <Button x:Name="RetryButton"
+                                Content="Retry Transaction" 
+                                Width="150"
+                                Height="35"
+                                Margin="0,0,10,0"
+                                Background="#2196F3"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Command="{Binding RetryCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="IsEnabled" Value="{Binding CanRetrySelected}"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="4">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#1976D2"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="Background" Value="#CCCCCC"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button x:Name="CancelTransactionButton"
+                                Content="Cancel Transaction" 
+                                Width="150"
+                                Height="35"
+                                Margin="0,0,10,0"
+                                Background="#FF5252"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Command="{Binding CancelTransactionCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="IsEnabled" Value="{Binding IsTransactionSelected}"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="4">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#D32F2F"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="Background" Value="#CCCCCC"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button x:Name="CloseButton"
+                                Content="Close" 
+                                Width="100"
+                                Height="35"
+                                Background="#EEEEEE"
+                                BorderThickness="0"
+                                Click="CloseButton_Click">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="4">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#DDDDDD"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="2" 
+                Background="#F5F5F5" 
+                BorderBrush="#DDDDDD" 
+                BorderThickness="1" 
+                Margin="0,10,0,0"
+                Padding="10,5"
+                CornerRadius="4">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Status: " FontWeight="SemiBold"/>
+                <TextBlock Text="{Binding StatusMessage}"/>
+                <TextBlock Text=" | "/>
+                <TextBlock Text="Failed Transactions: "/>
+                <TextBlock Text="{Binding FailedTransactions.Count}"/>
+                <TextBlock Text=" | "/>
+                <Button Content="Refresh" 
+                        Background="Transparent" 
+                        BorderThickness="0"
+                        Command="{Binding RefreshCommand}"
+                        Cursor="Hand"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

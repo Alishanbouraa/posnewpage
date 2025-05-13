@@ -67,7 +67,7 @@ namespace QuickTechPOS.ViewModels
         private Drawer _currentDrawer;
         private bool _useExchangeRate;
         public bool CanCheckout => CartItems.Count > 0 && IsDrawerOpen;
-
+        private int _pendingTransactionCount;
         private decimal _exchangeRate;
         private decimal _exchangeAmount;
 
@@ -144,7 +144,11 @@ namespace QuickTechPOS.ViewModels
                 }
             }
         }
-
+        public int PendingTransactionCount
+        {
+            get => _pendingTransactionCount;
+            set => SetProperty(ref _pendingTransactionCount, value);
+        }
         public Product SelectedProduct
         {
             get => _selectedProduct;
@@ -278,7 +282,7 @@ namespace QuickTechPOS.ViewModels
             get => _exchangeAmount;
             private set => SetProperty(ref _exchangeAmount, value);
         }
-
+        public bool HasPendingTransactions => PendingTransactionCount > 0;
 
         public bool CanRemoveItem => SelectedCartItem != null;
 
@@ -303,6 +307,7 @@ namespace QuickTechPOS.ViewModels
         public ICommand AddCustomerCommand { get; }
         public ICommand LookupTransactionCommand { get; }
         public ICommand EditTransactionCommand { get; }
+        public ICommand OpenRecoveryDialogCommand { get; }
         public ICommand PrintDrawerReportCommand { get; }
         public ICommand SaveTransactionCommand { get; }
         public ICommand PrintReceiptCommand { get; }
@@ -371,7 +376,8 @@ namespace QuickTechPOS.ViewModels
             AddToCartCommand = new RelayCommand(param => AddToCart(param as Product));
             RemoveFromCartCommand = new RelayCommand(param => RemoveFromCart(param as CartItem), param => param != null);
             ClearCartCommand = new RelayCommand(param => ClearCart());
-
+            OpenRecoveryDialogCommand = new RelayCommand(param => OpenRecoveryDialog());
+            CheckForFailedTransactionsAsync().ConfigureAwait(false);
             CheckoutCommand = new RelayCommand(async param => await CheckoutAsync(),
     param => CanCheckout && IsDrawerOpen);
 
@@ -407,6 +413,57 @@ namespace QuickTechPOS.ViewModels
             LoadInitialCustomersAsync();
             GetCurrentDrawerAsync().ConfigureAwait(false);
             LoadExchangeRateAsync();
+        }
+        private async Task CheckForFailedTransactionsAsync()
+        {
+            try
+            {
+                var failedTransactionService = new FailedTransactionService();
+                var transactions = await failedTransactionService.GetFailedTransactionsAsync();
+
+                PendingTransactionCount = transactions.Count;
+                OnPropertyChanged(nameof(HasPendingTransactions));
+
+                if (PendingTransactionCount > 0)
+                {
+                    StatusMessage = $"There are {PendingTransactionCount} failed transactions that need attention.";
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking for failed transactions: {ex.Message}");
+            }
+        }
+
+        private void OpenRecoveryDialog()
+        {
+            try
+            {
+                var dialog = new Views.FailedTransactionRecoveryDialog();
+                dialog.Owner = Application.Current.MainWindow;
+                var result = dialog.ShowDialog();
+
+                if (result == true)
+                {
+                    // Refresh transaction counts after recovery
+                    CheckForFailedTransactionsAsync().ConfigureAwait(false);
+
+                    // Refresh drawer status
+                    RefreshDrawerStatusAsync().ConfigureAwait(false);
+
+                    StatusMessage = "Transaction recovery completed successfully.";
+                }
+                else
+                {
+                    // Just refresh the counts
+                    CheckForFailedTransactionsAsync().ConfigureAwait(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error opening recovery dialog: {ex.Message}";
+                Console.WriteLine($"Error opening recovery dialog: {ex.Message}");
+            }
         }
 
         private async Task LoadExchangeRateAsync()
