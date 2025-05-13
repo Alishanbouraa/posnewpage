@@ -1,4 +1,5 @@
 ﻿// File: QuickTechPOS/Services/DatabaseContext.cs
+
 using Microsoft.EntityFrameworkCore;
 using QuickTechPOS.Models;
 using QuickTechPOS.Models.Enums;

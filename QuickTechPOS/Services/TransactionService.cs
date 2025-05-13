@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// File: QuickTechPOS/Services/TransactionService.cs
+
+using Microsoft.EntityFrameworkCore;
 using QuickTechPOS.Models;
 using QuickTechPOS.Models.Enums;
 using System;
@@ -13,6 +15,9 @@ namespace QuickTechPOS.Services
     {
         private readonly DatabaseContext _dbContext;
         private readonly ProductService _productService;
+        private readonly DrawerService _drawerService;
+        private readonly CustomerService _customerService;
+        private readonly TransactionStateMachine _stateMachine;
         private readonly Func<FailedTransactionService> _failedTransactionServiceFactory;
         private FailedTransactionService _lazyFailedTransactionService;
 
@@ -20,6 +25,9 @@ namespace QuickTechPOS.Services
         {
             _dbContext = new DatabaseContext(ConfigurationService.ConnectionString);
             _productService = new ProductService();
+            _drawerService = new DrawerService();
+            _customerService = new CustomerService();
+            _stateMachine = new TransactionStateMachine(_productService, _drawerService, _customerService);
             _failedTransactionServiceFactory = () => new FailedTransactionService(this);
         }
 
@@ -28,6 +36,9 @@ namespace QuickTechPOS.Services
         {
             _dbContext = new DatabaseContext(ConfigurationService.ConnectionString);
             _productService = new ProductService();
+            _drawerService = new DrawerService();
+            _customerService = new CustomerService();
+            _stateMachine = new TransactionStateMachine(_productService, _drawerService, _customerService);
             _lazyFailedTransactionService = failedTransactionService;
             _failedTransactionServiceFactory = null;
         }
@@ -56,171 +67,80 @@ namespace QuickTechPOS.Services
             var stopwatch = Stopwatch.StartNew();
             Console.WriteLine($"Starting transaction creation at: {DateTime.Now}");
 
-            var dbTransaction = await _dbContext.Database.BeginTransactionAsync();
-            Transaction newTransaction = null;
+            // Get the current drawer
+            var drawer = await _drawerService.GetOpenDrawerAsync(cashier.EmployeeId.ToString());
+            if (drawer == null)
+            {
+                string errorMessage = "No open drawer found for this cashier";
+                Console.WriteLine(errorMessage);
+                throw new Exception(errorMessage);
+            }
+
+            // Calculate if we need to add to customer debt
+            decimal totalAmount = items.Sum(item => item.Total);
+            bool addToCustomerDebt = paidAmount < totalAmount && customerId > 0 && customerName != "Walk-in Customer";
+            decimal amountToDebt = addToCustomerDebt ? totalAmount - paidAmount : 0;
+
+            // Prepare transaction context
+            var context = new TransactionStateMachine.TransactionContext
+            {
+                CartItems = items,
+                Cashier = cashier,
+                Drawer = drawer,
+                CustomerId = customerId,
+                CustomerName = customerName,
+                PaymentMethod = paymentMethod,
+                PaidAmount = paidAmount,
+                AddToCustomerDebt = addToCustomerDebt,
+                AmountToDebt = amountToDebt
+            };
 
             try
             {
-                decimal totalAmount = items.Sum(item => item.Total);
-                Console.WriteLine($"Calculated total amount: {totalAmount:C2} from {items.Count} items");
+                // Execute the transaction state machine
+                var result = await _stateMachine.ExecuteAsync(context);
 
-                newTransaction = new Transaction
+                if (result.Success)
                 {
-                    CustomerId = customerId == 0 ? null : customerId,
-                    CustomerName = customerName ?? "Walk-in Customer",
-                    TotalAmount = totalAmount,
-                    PaidAmount = paidAmount,
-                    TransactionDate = DateTime.Now,
-                    TransactionType = TransactionType.Sale,
-                    Status = TransactionStatus.Completed,
-                    PaymentMethod = paymentMethod ?? "Cash",
-                    CashierId = cashier.EmployeeId.ToString(),
-                    CashierName = cashier.FullName ?? "Unknown",
-                    CashierRole = cashier.Role ?? "Cashier"
-                };
-
-                _dbContext.Transactions.Add(newTransaction);
-
-                // Save transaction to get ID but don't commit yet
-                await _dbContext.SaveChangesAsync();
-                Console.WriteLine($"Created transaction with ID: {newTransaction.TransactionId}");
-
-                // Record transaction details
-                foreach (var item in items)
-                {
-                    if (item.Product == null || item.Product.ProductId <= 0)
-                    {
-                        Console.WriteLine("Warning: Skipping invalid product in transaction detail");
-                        continue;
-                    }
-
-                    var detail = new TransactionDetail
-                    {
-                        TransactionId = newTransaction.TransactionId,
-                        ProductId = item.Product.ProductId,
-                        Quantity = item.Quantity > 0 ? item.Quantity : 1,
-                        UnitPrice = item.UnitPrice >= 0 ? item.UnitPrice : 0,
-                        PurchasePrice = item.Product.PurchasePrice >= 0 ? item.Product.PurchasePrice : 0,
-                        Discount = item.Discount >= 0 ? item.Discount : 0,
-                        Total = item.Total >= 0 ? item.Total : (item.Quantity * item.UnitPrice)
-                    };
-
-                    _dbContext.TransactionDetails.Add(detail);
-                    Console.WriteLine($"Added transaction detail for product: {item.Product.Name}, Qty: {item.Quantity}, Total: {item.Total:C2}");
+                    stopwatch.Stop();
+                    Console.WriteLine($"Transaction completed successfully in {stopwatch.ElapsedMilliseconds}ms");
+                    return result.Transaction;
                 }
-
-                // Save transaction details
-                await _dbContext.SaveChangesAsync();
-
-                // Update inventory
-                foreach (var item in items)
+                else
                 {
+                    Console.WriteLine($"ERROR in CreateTransactionAsync: {result.ErrorMessage}");
+
+                    // Record failed transaction for later retry
                     try
                     {
-                        // Check if the item is a box and update inventory accordingly
-                        if (item.IsBox)
-                        {
-                            // If it's a box, update box inventory
-                            bool boxStockUpdated = await _productService.UpdateBoxStockAsync(item.Product.ProductId, item.Quantity);
-                            if (!boxStockUpdated)
-                            {
-                                Console.WriteLine($"Warning: Failed to update box stock for product {item.Product.ProductId}");
-                                throw new Exception($"Failed to update inventory for product {item.Product.Name}");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Updated box inventory for product {item.Product.ProductId}, reduced {item.Quantity} boxes");
-                            }
-                        }
-                        else
-                        {
-                            // If it's an individual item, update regular stock
-                            bool stockUpdated = await _productService.UpdateStockAsync(item.Product.ProductId, item.Quantity);
-                            if (!stockUpdated)
-                            {
-                                Console.WriteLine($"Warning: Failed to update stock for product {item.Product.ProductId}");
-                                throw new Exception($"Failed to update inventory for product {item.Product.Name}");
-                            }
-                        }
+                        await FailedTransactionService.RecordFailedTransactionAsync(
+                            context.Transaction,
+                            items,
+                            cashier,
+                            context.LastException ?? new Exception(result.ErrorMessage),
+                            context.FailureComponent ?? "Unknown");
                     }
-                    catch (Exception stockEx)
+                    catch (Exception recordEx)
                     {
-                        Console.WriteLine($"Stock update error for product {item.Product.ProductId}: {stockEx.Message}");
-                        throw new Exception($"Inventory update failed: {stockEx.Message}", stockEx);
+                        Console.WriteLine($"Error recording failed transaction: {recordEx.Message}");
                     }
+
+                    throw new Exception($"Error during checkout: {result.ErrorMessage}");
                 }
-
-                // Update drawer with sales amount
-                try
-                {
-                    var drawerService = new DrawerService();
-                    var openDrawer = await drawerService.GetOpenDrawerAsync(cashier.EmployeeId.ToString());
-
-                    if (openDrawer != null)
-                    {
-                        var drawerTransaction = new DrawerTransaction
-                        {
-                            DrawerId = openDrawer.DrawerId,
-                            Timestamp = DateTime.Now,
-                            Type = "Cash Sale",
-                            Amount = totalAmount,
-                            Balance = openDrawer.CurrentBalance + totalAmount,
-                            ActionType = "Sale",
-                            Description = $"Sale Transaction #{newTransaction.TransactionId}",
-                            TransactionReference = newTransaction.TransactionId.ToString(),
-                            IsVoided = false,
-                            PaymentMethod = paymentMethod
-                        };
-
-                        _dbContext.DrawerTransactions.Add(drawerTransaction);
-                        await _dbContext.SaveChangesAsync();
-
-                        // Update drawer
-                        await drawerService.UpdateDrawerTransactionsAsync(
-                            openDrawer.DrawerId,
-                            totalAmount, // Sales amount
-                            0,          // No expenses
-                            0           // No supplier payments
-                        );
-
-                        Console.WriteLine($"Created drawer transaction for sale: {drawerTransaction.TransactionId}");
-                    }
-                    else
-                    {
-                        throw new Exception("No open drawer found for this transaction");
-                    }
-                }
-                catch (Exception drawerEx)
-                {
-                    Console.WriteLine($"Error with drawer transaction: {drawerEx.Message}");
-                    throw new Exception($"Drawer update failed: {drawerEx.Message}", drawerEx);
-                }
-
-                // All steps completed successfully, commit the transaction
-                await dbTransaction.CommitAsync();
-
-                stopwatch.Stop();
-                Console.WriteLine($"Transaction completed successfully in {stopwatch.ElapsedMilliseconds}ms");
-
-                return newTransaction;
             }
             catch (Exception ex)
             {
-                // Rollback the database transaction
-                await dbTransaction.RollbackAsync();
-
-                Console.WriteLine($"ERROR in CreateTransactionAsync: {ex.Message}");
-                Console.WriteLine($"Exception type: {ex.GetType().Name}");
+                // This catches any unexpected errors not handled by the state machine
+                Console.WriteLine($"Unexpected error in CreateTransactionAsync: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
 
                 if (ex.InnerException != null)
                 {
                     Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
-                    Console.WriteLine($"Inner exception type: {ex.InnerException.GetType().Name}");
                 }
 
-                // Determine which component failed
-                string failureComponent = "Unknown";
+                // Determine which component failed if not already set
+                string failureComponent = context.FailureComponent ?? "Unknown";
                 if (ex.Message.Contains("inventory") || ex.Message.Contains("stock"))
                 {
                     failureComponent = "Inventory";
@@ -238,7 +158,7 @@ namespace QuickTechPOS.Services
                 try
                 {
                     await FailedTransactionService.RecordFailedTransactionAsync(
-                        newTransaction,
+                        context.Transaction,
                         items,
                         cashier,
                         ex,
